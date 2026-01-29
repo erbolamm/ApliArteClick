@@ -19,6 +19,15 @@ abstract class MouseService {
   /// Retrieves the current global mouse cursor position.
   Future<Map<String, double>?> getMousePosition();
 
+  /// Checks if the left mouse button is currently pressed.
+  Future<bool> isMouseButtonPressed();
+
+  /// Simulates a key press (down and up) with optional modifiers.
+  Future<void> performKeyPress(int keyCode, {List<String>? modifiers});
+
+  /// Switches to the next application (Cmd+Tab or Alt+Tab).
+  Future<void> switchApplication();
+
   /// Factory constructor to create the appropriate platform-specific implementation.
   static MouseService create() {
     if (Platform.isMacOS) {
@@ -69,6 +78,40 @@ class _MacOSMouseService implements MouseService {
       return null;
     }
   }
+
+  @override
+  Future<bool> isMouseButtonPressed() async {
+    try {
+      final bool? isPressed = await _channel.invokeMethod(
+        'isMouseButtonPressed',
+      );
+      return isPressed ?? false;
+    } on PlatformException catch (e) {
+      debugPrint("Failed to check mouse button: ${e.message}");
+      return false;
+    }
+  }
+
+  @override
+  Future<void> performKeyPress(int keyCode, {List<String>? modifiers}) async {
+    try {
+      await _channel.invokeMethod('performKeyPress', {
+        'keyCode': keyCode,
+        'modifiers': modifiers ?? [],
+      });
+    } on PlatformException catch (e) {
+      debugPrint("Failed to perform key press: ${e.message}");
+    }
+  }
+
+  @override
+  Future<void> switchApplication() async {
+    try {
+      await _channel.invokeMethod('switchApplication');
+    } on PlatformException catch (e) {
+      debugPrint("Failed to switch application: ${e.message}");
+    }
+  }
 }
 
 /// Windows implementation using Win32 API directly via FFI.
@@ -112,6 +155,93 @@ class _WindowsMouseService implements MouseService {
     }
     return null;
   }
+
+  @override
+  Future<bool> isMouseButtonPressed() async {
+    // Check if left mouse button is pressed using GetAsyncKeyState
+    final state = GetAsyncKeyState(VK_LBUTTON);
+    return (state & 0x8000) != 0;
+  }
+
+  @override
+  Future<void> performKeyPress(int keyCode, {List<String>? modifiers}) async {
+    final mods = modifiers ?? [];
+    final inputs = <INPUT>[];
+
+    // Modifiers down
+    if (mods.contains('control')) {
+      inputs.add(_createKeyInput(VK_CONTROL, false));
+    }
+    if (mods.contains('shift')) {
+      inputs.add(_createKeyInput(VK_SHIFT, false));
+    }
+    if (mods.contains('alt')) {
+      inputs.add(_createKeyInput(VK_MENU, false));
+    }
+    if (mods.contains('command')) {
+      inputs.add(_createKeyInput(VK_LWIN, false));
+    }
+
+    // Key down and up
+    inputs.add(_createKeyInput(keyCode, false));
+    inputs.add(_createKeyInput(keyCode, true));
+
+    // Modifiers up (reverse order)
+    if (mods.contains('command')) {
+      inputs.add(_createKeyInput(VK_LWIN, true));
+    }
+    if (mods.contains('alt')) {
+      inputs.add(_createKeyInput(VK_MENU, true));
+    }
+    if (mods.contains('shift')) {
+      inputs.add(_createKeyInput(VK_SHIFT, true));
+    }
+    if (mods.contains('control')) {
+      inputs.add(_createKeyInput(VK_CONTROL, true));
+    }
+
+    final pInputs = calloc<INPUT>(inputs.length);
+    for (var i = 0; i < inputs.length; i++) {
+      pInputs[i] = inputs[i];
+    }
+    SendInput(inputs.length, pInputs, ffi.sizeOf<INPUT>());
+    free(pInputs);
+  }
+
+  INPUT _createKeyInput(int keyCode, bool isUp) {
+    final input = calloc<INPUT>().ref;
+    input.type = INPUT_KEYBOARD;
+    input.ki.wVk = keyCode;
+    if (isUp) input.ki.dwFlags = KEYEVENTF_KEYUP;
+    return input;
+  }
+
+  @override
+  Future<void> switchApplication() async {
+    // Windows Alt + Tab
+    final inputs = calloc<INPUT>(4);
+
+    // Alt Down
+    inputs[0].type = INPUT_KEYBOARD;
+    inputs[0].ki.wVk = VK_MENU; // ALT
+
+    // Tab Down
+    inputs[1].type = INPUT_KEYBOARD;
+    inputs[1].ki.wVk = VK_TAB;
+
+    // Tab Up
+    inputs[2].type = INPUT_KEYBOARD;
+    inputs[2].ki.wVk = VK_TAB;
+    inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+
+    // Alt Up
+    inputs[3].type = INPUT_KEYBOARD;
+    inputs[3].ki.wVk = VK_MENU;
+    inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+
+    SendInput(4, inputs, ffi.sizeOf<INPUT>());
+    free(inputs);
+  }
 }
 
 class _GenericMouseService implements MouseService {
@@ -128,5 +258,20 @@ class _GenericMouseService implements MouseService {
   @override
   Future<Map<String, double>?> getMousePosition() async {
     return null;
+  }
+
+  @override
+  Future<bool> isMouseButtonPressed() async {
+    return false;
+  }
+
+  @override
+  Future<void> performKeyPress(int keyCode, {List<String>? modifiers}) async {
+    debugPrint("Keyboard press not implemented for this platform yet.");
+  }
+
+  @override
+  Future<void> switchApplication() async {
+    debugPrint("Application switching not implemented for this platform yet.");
   }
 }
