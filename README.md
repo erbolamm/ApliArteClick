@@ -2,7 +2,9 @@
 
 Un auto-clicker profesional multiplataforma con interfaz moderna y funciones avanzadas.
 
-![ApliArte Click Logo](assets/images/logo.png)
+**Web Oficial**: [apliarte-click-pro-2026.web.app](https://apliarte-click-pro-2026.web.app)
+
+![ApliArte Click Logo](landing_page/assets/images/logo.svg)
 
 ## 🌟 Características Principales
 
@@ -19,17 +21,15 @@ Un auto-clicker profesional multiplataforma con interfaz moderna y funciones ava
 - **HUD en Tiempo Real**: Información visual durante la grabación
 
 ### 🔧 Funciones Avanzadas
-- **Modo Dodge**: La ventana se aparta automáticamente del cursor durante la grabación
-- **Grabación con ENTER**: Captura la posición del cursor con una tecla
-- **Atajos Globales**: Tecla personalizable (F1-F12) para control rápido
-- **Temporizador Preciso**: Configura intervalos hasta el milisegundo
-- **Multi-Monitor**: Soporte completo para múltiples pantallas
+- **Modo Dodge**: La ventana se aparta automáticamente del cursor durante la grabación para no estorbar.
+- **Grabación Inteligente**: Haz clic en cualquier lugar de la pantalla para capturar la posición exacta automáticamente.
+- **Atajos Globales**: Tecla personalizable (F1-F12) para control rápido a nivel de sistema.
 
 ## 📥 Descargas
 
 ### macOS
 - **Requisitos**: macOS 10.14 o superior
-- **Descarga**: [ApliArte Click Pro.app](#)
+- **Descarga**: [ApliArteClickPro-macOS-v1.0.0.zip](https://github.com/erbolamm/ApliArteClick/releases/download/v1.0.0/ApliArteClickPro-macOS-v1.0.0.zip)
 - **Permisos**: Requiere acceso de Accesibilidad (se solicita automáticamente)
 
 ### Windows
@@ -62,9 +62,9 @@ Un auto-clicker profesional multiplataforma con interfaz moderna y funciones ava
 
 ## 🎮 Uso Rápido
 
-1. **Selecciona el tipo de acción**: Mouse o Teclado
-2. **Para Mouse**: Haz clic en "GRABAR POSICIÓN" y mueve el cursor al punto deseado, luego pulsa ENTER
-3. **Para Teclado**: Selecciona la tecla y los modificadores que quieras
+1. **Selecciona el tipo de acción**: Mouse o Teclado.
+2. **Para Mouse**: Haz clic en "GRABAR POSICIÓN", mueve el cursor a donde quieras y haz un **CLIC** normal para guardar.
+3. **Para Teclado**: Selecciona la tecla y los modificadores que quieras.
 4. **Configura el intervalo**: Ajusta el tiempo entre acciones
 5. **Asigna un atajo**: Elige tu tecla de control (F1-F12)
 6. **¡Listo!**: Pulsa INICIAR o usa tu atajo global
@@ -81,8 +81,8 @@ Un auto-clicker profesional multiplataforma con interfaz moderna y funciones ava
 ### Compilar desde el código
 ```bash
 # Clonar el repositorio
-git clone https://github.com/apliarte/click_mac.git
-cd click_mac
+git clone https://github.com/erbolamm/ApliArteClick.git
+cd ApliArteClick
 
 # Instalar dependencias
 flutter pub get
@@ -116,9 +116,8 @@ flutter build linux --release
 
 ## 🌐 Enlaces
 
-- **Web**: [apliarte.com](https://apliarte.com)
-- **Más Apps**: [apliarte.com/apps](https://www.apliarte.com/p/apps-para-ti.html)
-- **GitHub**: [github.com/apliarte](https://github.com/apliarte)
+- **Web**: [apliarte-click-pro-2026.web.app](https://apliarte-click-pro-2026.web.app)
+- **GitHub**: [github.com/erbolamm/ApliArteClick](https://github.com/erbolamm/ApliArteClick)
 - **Soporte**: [apliarte.com/soporte](https://apliarte.com/soporte)
 
 ## ⭐ Contribuir
