@@ -473,3 +473,83 @@ footer {
         width: 100%;
     }
 }
+
+/* Terminal Install */
+.terminal-install {
+    margin-top: 4rem;
+    text-align: center;
+}
+
+.terminal-install h3 {
+    font-size: 1rem;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.code-block {
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 1.2rem 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 95%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    position: relative;
+    overflow: hidden;
+}
+
+.code-block::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary);
+}
+
+.code-block .prompt {
+    color: var(--primary);
+    font-weight: 700;
+    user-select: none;
+}
+
+.code-block .command {
+    color: #eee;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.code-block .command::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.copy-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #aaa;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.copy-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.copy-btn:active {
+    transform: scale(0.95);
+}
