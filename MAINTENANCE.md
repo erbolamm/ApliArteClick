@@ -42,6 +42,13 @@ La web está en la carpeta `/landing_page`.
     ```bash
     firebase deploy --only hosting
     ```
+3.  **Nota**: Si cambias el `install.sh`, asegúrate de actualizar el checksum o la URL en el `index.html`.
+
+## 🖥️ Mantenimiento del Installer Script
+El archivo `install.sh` está en la raíz.
+- Se descarga desde el `raw.githubusercontent.com`.
+- Si lo modificas, haz `push` a `main` para que la URL pública se actualice.
+
 
 ## 🏪 Guía de Publicación en Tiendas (Stores)
 
