@@ -60,6 +60,32 @@ Un auto-clicker profesional multiplataforma con interfaz moderna y funciones ava
 2. Dale permisos de ejecución: `chmod +x apliarte-click-pro.AppImage`
 3. Ejecútalo: `./apliarte-click-pro.AppImage`
 
+### 🖥️ Instalación Rápida (Terminal)
+Si eres desarrollador o te gusta la terminal, hemos creado una forma **súper sencilla** de instalar la app. Simplemente copia y pega el siguiente comando en tu terminal de macOS:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"
+```
+
+**¿Qué hace este comando?**
+1.  Descarga automáticamente la última versión segura desde GitHub Releases.
+2.  Instala la aplicación en tu carpeta de `/Applications`.
+3.  ¡Y listo! Ya puedes buscar "ApliArte Click Pro" en tu Launchpad.
+
+---
+
+## 🚀 Próximamente (Roadmap)
+
+Estamos trabajando duro en la **versión 2.0** que incluirá una funcionalidad revolucionaria:
+
+### ✨ Modo Multi-Clip (En Desarrollo)
+Actualmente, la app permite un punto de acción. Pero estamos desarrollando un sistema para:
+- **Múltiples Punteros**: Configura varios puntos de clic en diferentes partes de la pantalla.
+- **Configuraciones Distintas**: Asigna intervalos y acciones diferentes a cada puntero.
+- **Secuencias Complejas**: Crea automatizaciones avanzadas combinando múltiples clics y teclas.
+
+¡Mantente atento a las actualizaciones!
+
 ## 🎮 Uso Rápido
 
 1. **Selecciona el tipo de acción**: Mouse o Teclado.
