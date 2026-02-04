@@ -474,82 +474,93 @@ footer {
     }
 }
 
-/* Terminal Install */
+/* Terminal Install Redesign */
 .terminal-install {
-    margin-top: 4rem;
-    text-align: center;
+    margin-top: 5rem;
+    display: flex;
+    justify-content: center;
 }
 
-.terminal-install h3 {
-    font-size: 1rem;
-    color: var(--text-dim);
-    margin-bottom: 1.5rem;
-    font-weight: 400;
-    opacity: 0.8;
+.terminal-content {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    width: 100%;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
 }
 
-.code-block {
-    background: #000;
-    border: 1px solid #333;
-    border-radius: 12px;
-    padding: 1.2rem 2rem;
-    display: inline-flex;
+.terminal-header {
+    display: flex;
     align-items: center;
-    gap: 1.5rem;
-    max-width: 95%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    position: relative;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.terminal-app-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+}
+
+.code-container {
+    background: #000;
+    border-radius: 12px;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 1px solid #333;
+}
+
+.code-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-left: 1rem;
     overflow: hidden;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.9rem;
 }
 
-.code-block::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--primary);
-}
-
-.code-block .prompt {
+.code-wrapper .prompt {
     color: var(--primary);
-    font-weight: 700;
+    font-weight: bold;
     user-select: none;
 }
 
-.code-block .command {
-    color: #eee;
-    font-size: 0.9rem;
+.code-wrapper code {
+    color: #e0e0e0;
     white-space: nowrap;
     overflow-x: auto;
-    scrollbar-width: none; /* Firefox */
+    padding-right: 1rem;
 }
 
-.code-block .command::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+.code-wrapper code::-webkit-scrollbar {
+    display: none;
 }
 
-.copy-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #aaa;
-    padding: 0.5rem 1rem;
+.icon-copy-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-dim);
+    width: 40px;
+    height: 40px;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-.copy-btn:hover {
+.icon-copy-btn:hover {
     background: var(--primary);
     color: white;
-    border-color: var(--primary);
-}
-
-.copy-btn:active {
-    transform: scale(0.95);
 }
