@@ -31,7 +31,7 @@
   <main>
     <section class="hero">
       <div class="hero-content">
-        <div class="badge">Lanzamiento Oficial v1.0.0</div>
+        <div class="badge new">¡Nuevo! Versión 2.0 (Pro) Disponible</div>
         <h1>Automatización con <span>precisión extrema</span></h1>
         <p>La herramienta definitiva para macOS que ahorra horas de tareas repetitivas. Diseñada para ser potente,
           invisible y ridículamente fácil de usar.</p>
@@ -107,21 +107,19 @@
         </div>
 
         <!-- Sección Multi-Clip (En Desarrollo) -->
-        <div class="feature-card coming-soon">
+        <div class="feature-card new-feature">
           <div class="feature-header">
             <div class="icon">🚀</div>
-            <span class="badge">En Desarrollo</span>
+            <span class="badge">Nuevo en v2.0</span>
           </div>
-          <h3>Modo Multi-Clip</h3>
-          <p>Actualmente, la app permite un punto de acción. Pero estamos desarrollando un sistema para:</p>
+          <h3>Modo Multi-Clip & Librería</h3>
+          <p>Potencia total desbloqueada:</p>
           <ul class="feature-list">
-            <li><strong>Múltiples Punteros:</strong> Configura varios puntos de clic en diferentes partes de la
-              pantalla.</li>
-            <li><strong>Configuraciones Distintas:</strong> Asigna intervalos y acciones diferentes a cada puntero.</li>
-            <li><strong>Secuencias Complejas:</strong> Crea automatizaciones avanzadas combinando múltiples clics y
-              teclas.</li>
+            <li><strong>Secuencias Mixtas:</strong> Combina clics y teclas en el mismo flujo.</li>
+            <li><strong>Librería de Acciones:</strong> Guarda, carga y reutiliza tus mejores automatizaciones.</li>
+            <li><strong>Atajos de Teclado:</strong> "Hold" (Sostener) teclas modificadoras y más.</li>
+            <li><strong>Interfaz Compacta:</strong> Diseño optimizado para productividad.</li>
           </ul>
-          <p class="note">¡Mantente atento a las actualizaciones!</p>
         </div>
       </div>
     </section>
@@ -131,15 +129,38 @@
         <h2>Lleva tu flujo de trabajo al <span>siguiente nivel</span></h2>
         <p>Descarga la versión certificada para macOS y empieza a automatizar hoy mismo.</p>
         <div class="download-grid">
-          <a href="https://github.com/erbolamm/ApliArteClick/releases/download/v1.0.0/ApliArteClickPro-macOS-v1.0.0.zip"
-            class="download-card">
+          <!-- Version 2.0 Card -->
+          <div class="download-card featured">
+            <div class="badge-overlay">RECOMENDADO</div>
             <div class="os-icon">
               <img src="assets/images/logo.png" alt="ApliArte Logo" style="width: 80px; height: 80px;">
             </div>
-            <div class="os-name">macOS Pro</div>
-            <div class="os-info">Optimizado para Apple Silicon e Intel</div>
-            <span class="btn-download">Descargar instalador (.zip)</span>
-          </a>
+            <div class="os-name">macOS Pro v2.0</div>
+            <div class="os-info">Nuevas funciones, Librería y más</div>
+            <a href="https://github.com/erbolamm/ApliArteClick/releases/download/v2.0.0/ApliArteClickPro-macOS-v2.0.0.zip"
+              class="btn-download primary">Descargar v2.0 (.zip)</a>
+            <div class="terminal-mini">
+              <span>Terminal:</span>
+              <code class="mini-code"
+                onclick="navigator.clipboard.writeText(this.innerText)">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"</code>
+            </div>
+          </div>
+
+          <!-- Version 1.0 Card -->
+          <div class="download-card legacy">
+            <div class="os-icon grayscale">
+              <img src="assets/images/logo.png" alt="ApliArte Logo" style="width: 60px; height: 60px; opacity: 0.7;">
+            </div>
+            <div class="os-name">macOS Clásico v1.0</div>
+            <div class="os-info">Versión simple y estable</div>
+            <a href="https://github.com/erbolamm/ApliArteClick/releases/download/v1.0.0/ApliArteClickPro-macOS-v1.0.0.zip"
+              class="btn-download secondary">Descargar v1.0 (.zip)</a>
+            <div class="terminal-mini">
+              <span>Terminal (v1.0):</span>
+              <code class="mini-code"
+                onclick="navigator.clipboard.writeText(this.innerText)">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)" -- v1.0.0</code>
+            </div>
+          </div>
         </div>
       </div>
 

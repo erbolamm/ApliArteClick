@@ -570,9 +570,11 @@ footer {
     background: var(--primary);
     color: white;
 }
+
 /* Coming Soon Feature */
 .feature-card.coming-soon {
-    grid-column: 1 / -1; /* Full width */
+    grid-column: 1 / -1;
+    /* Full width */
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 122, 255, 0.05) 100%);
     border: 1px solid rgba(0, 122, 255, 0.2);
     display: flex;
@@ -626,4 +628,74 @@ footer {
     color: var(--primary);
     font-weight: 500;
     margin-top: auto;
+}
+
+/* New Download Cards Styles */
+.download-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.download-card.featured {
+    border: 1px solid var(--primary);
+    background: linear-gradient(145deg, #1a1a1a 0%, #111 100%);
+    box-shadow: 0 0 30px rgba(0, 122, 255, 0.15);
+}
+
+.download-card.legacy {
+    border: 1px solid #333;
+    opacity: 0.8;
+}
+
+.badge-overlay {
+    position: absolute;
+    top: 20px;
+    right: -35px;
+    background: var(--primary);
+    color: white;
+    padding: 5px 40px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    transform: rotate(45deg);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.grayscale {
+    filter: grayscale(100%);
+}
+
+.terminal-mini {
+    margin-top: 1.5rem;
+    text-align: left;
+    background: #000;
+    border-radius: 8px;
+    padding: 0.8rem;
+    border: 1px solid #333;
+    font-size: 0.8rem;
+}
+
+.terminal-mini span {
+    display: block;
+    color: #666;
+    margin-bottom: 0.3rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mini-code {
+    display: block;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #28c840;
+    overflow-x: auto;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.mini-code:active {
+    opacity: 0.7;
+}
+
+.download-card.legacy .terminal-mini {
+    opacity: 0.6;
 }
