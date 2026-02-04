@@ -47,20 +47,37 @@
               <span>Instalar desde terminal</span>
             </div>
 
-            <div class="code-container">
-              <div class="code-wrapper">
-                <span class="prompt">$</span>
-                <code
-                  id="install-cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"</code>
+            <!-- Version 2.0 (Pro) -->
+            <div class="terminal-version-group">
+              <div class="terminal-label pro">
+                <span>Versión 2.0 (Pro) ✨</span>
+                <small>Recomendado</small>
               </div>
-              <button class="icon-copy-btn" onclick="copyToClipboard()" aria-label="Copiar comando">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-              </button>
+              <div class="code-container pro">
+                <div class="code-wrapper">
+                  <span class="prompt">$</span>
+                  <code
+                    onclick="navigator.clipboard.writeText(this.innerText)">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"</code>
+                </div>
+                <!-- Mini copy button logic could be duplicated or just rely on click-to-copy above -->
+              </div>
             </div>
+
+            <!-- Version 1.0 (Legacy) -->
+            <div class="terminal-version-group">
+              <div class="terminal-label legacy">
+                <span>Versión 1.0 (Legacy)</span>
+                <small>v1.0.0</small>
+              </div>
+              <div class="code-container legacy">
+                <div class="code-wrapper">
+                  <span class="prompt">$</span>
+                  <code
+                    onclick="navigator.clipboard.writeText(this.innerText)">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)" -- v1.0.0</code>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>

@@ -699,3 +699,40 @@ footer {
 .download-card.legacy .terminal-mini {
     opacity: 0.6;
 }
+
+/* Terminal Version Distinction */
+.terminal-version-group {
+    margin-bottom: 1.2rem;
+}
+
+.terminal-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-label.pro {
+    color: var(--primary);
+}
+
+.terminal-label.legacy {
+    color: #666;
+}
+
+.code-container.pro {
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    background: rgba(0, 122, 255, 0.05);
+}
+
+.code-container.legacy {
+    opacity: 0.7;
+    border-style: dashed;
+}
+
+.code-container.legacy:hover {
+    opacity: 1;
+}
