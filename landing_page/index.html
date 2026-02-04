@@ -39,6 +39,30 @@
           <a href="#download" class="btn btn-primary">Descargar Ahora</a>
           <a href="https://www.apliarte.com" class="btn btn-secondary">Explorar ApliArte</a>
         </div>
+
+        <div class="terminal-install hero-install">
+          <div class="terminal-content">
+            <div class="terminal-header">
+              <img src="assets/images/app_icon_new.png" alt="ApliArte App Icon" class="terminal-app-icon">
+              <span>Instalar desde terminal</span>
+            </div>
+
+            <div class="code-container">
+              <div class="code-wrapper">
+                <span class="prompt">$</span>
+                <code
+                  id="install-cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"</code>
+              </div>
+              <button class="icon-copy-btn" onclick="copyToClipboard()" aria-label="Copiar comando">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="hero-visual">
         <div class="app-mockup">
@@ -99,32 +123,7 @@
         </div>
       </div>
 
-      </div>
 
-      <div class="terminal-install">
-        <div class="terminal-content">
-          <div class="terminal-header">
-            <img src="assets/images/logo.svg" alt="ApliArte Click Icon" class="terminal-app-icon">
-            <span>Instalación para desarrolladores</span>
-          </div>
-
-          <div class="code-container">
-            <div class="code-wrapper">
-              <span class="prompt">$</span>
-              <code
-                id="install-cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"</code>
-            </div>
-            <button class="icon-copy-btn" onclick="copyToClipboard()" aria-label="Copiar comando">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-      </div>
     </section>
   </main>
 
@@ -140,8 +139,7 @@
       });
     }
   </script>
-  </section>
-  </main>
+
 
   <footer>
     <div class="footer-content">
