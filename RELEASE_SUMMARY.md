@@ -1,37 +1,26 @@
-# 🎉 ApliArte Click Pro v1.0.0 - Lanzamiento Oficial
+# Release Summary - ApliArte Click Pro v2.0.0 🚀
 
-## ✅ Estado Final
-**Fecha**: 4 de Febrero de 2026  
-**Versión**: 1.0.0+1  
-**Estado**: ✅ **PUBLICADO Y VERIFICADO**
+## Overview
+We are thrilled to announce **Version 2.0.0** of ApliArte Click Pro! This release introduces a major UI overhaul and powerful new features for advanced automation, earning the "Pro" designation.
 
----
+**Note:** Only Version 2.0 includes these advanced features. Version 1.0 remains available for basic use.
 
-## 📦 Distribución
-### macOS (Universal)
-- **Archivo**: `ApliArteClickPro-macOS-v1.0.0.zip`
-- **Ubicación**: https://github.com/erbolamm/ApliArteClick/releases/download/v1.0.0/ApliArteClickPro-macOS-v1.0.0.zip
-- **Instalación**: 
-  - Arrastrar a Aplicaciones.
-  - O terminal: `curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh | bash`
+## Key Features (v2.0 Exclusive)
+- **🎨 Redesigned Single-Column UI:** simpler, cleaner, and fully responsive window.
+- **💾 Saved Sequences (Action Library):** Save your complex click/key scenarios and load them anytime.
+- **⌨️ Advanced Mixed Actions:** Combine mouse clicks with keyboard shortcuts in the same sequence.
+- **🎹 Key Holding Support:** Simulate holding keys (e.g., Hold Shift -> Click -> Release Shift).
+- **⏱️ Mini-Controls:** New compact header with interval picker and stop shortcut.
+- **🎁 Presets:** Built-in actions for common tasks like "Switch App", "Copy", "Paste".
 
----
+## How to Install
+Download the corresponding file for your operating system:
+- **macOS:** `ApliArteClickPro-macOS-v2.0.0.zip`
+- **Windows:** `ApliArteClickPro-Windows-v2.0.0.zip`
+- **Linux:** `ApliArteClickPro-Linux-v2.0.0.tar.gz`
 
-## 🎨 Características Destacadas
-- [x] **Terminal Installer**: Instalación rápida para desarrolladores vía comando.
-- [x] **Grabación Inteligente**: Clic en pantalla para capturar coordenadas automáticamente.
-- [x] **Modo Dodge**: La ventana se aparta sola al grabar.
-- [x] **Interfaz Premium**: Glassmorphism y animaciones fluidas (Web actualizada con Logo 3D).
-- [x] **Atajos Globales**: Control absoluto con teclas F1-F12.
-
----
-
-## 🔗 Enlaces Oficiales
-- **Web de Descarga**: [apliarte-click-pro-2026.web.app](https://apliarte-click-pro-2026.web.app)
-- **Repositorio**: [erbolamm/ApliArteClick](https://github.com/erbolamm/ApliArteClick)
-- **Soporte**: [apliarte.com/soporte](https://apliarte.com/soporte)
-
----
-
-**Hecho con ❤️ por ApliArte**  
-*Desarrollado con asistencia de Antigravity (Google DeepMind)*
+## Installation Command
+You can also install via the included script (if applicable):
+```bash
+./install.sh
+```

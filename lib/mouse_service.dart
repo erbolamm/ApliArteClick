@@ -22,13 +22,18 @@ abstract class MouseService {
   /// Checks if the left mouse button is currently pressed.
   Future<bool> isMouseButtonPressed();
 
+  /// Simulates a key down event.
+  Future<void> performKeyDown(int keyCode);
+
+  /// Simulates a key up event.
+  Future<void> performKeyUp(int keyCode);
+
   /// Simulates a key press (down and up) with optional modifiers.
   Future<void> performKeyPress(int keyCode, {List<String>? modifiers});
 
   /// Switches to the next application (Cmd+Tab or Alt+Tab).
   Future<void> switchApplication();
 
-  /// Factory constructor to create the appropriate platform-specific implementation.
   static MouseService create() {
     if (Platform.isMacOS) {
       return _MacOSMouseService();
@@ -44,6 +49,25 @@ abstract class MouseService {
 class _MacOSMouseService implements MouseService {
   static const _channel = MethodChannel('com.apliarte.click/mouse');
 
+  @override
+  Future<void> performKeyDown(int keyCode) async {
+    try {
+      await _channel.invokeMethod('performKeyDown', {'keyCode': keyCode});
+    } on PlatformException catch (e) {
+      debugPrint("Failed to perform key down: ${e.message}");
+    }
+  }
+
+  @override
+  Future<void> performKeyUp(int keyCode) async {
+    try {
+      await _channel.invokeMethod('performKeyUp', {'keyCode': keyCode});
+    } on PlatformException catch (e) {
+      debugPrint("Failed to perform key up: ${e.message}");
+    }
+  }
+
+  // ... existing methods ...
   @override
   Future<void> performClick({double? x, double? y}) async {
     try {
@@ -116,6 +140,24 @@ class _MacOSMouseService implements MouseService {
 
 /// Windows implementation using Win32 API directly via FFI.
 class _WindowsMouseService implements MouseService {
+  @override
+  Future<void> performKeyDown(int keyCode) async {
+    final input = _createKeyInput(keyCode, false);
+    final pInput = calloc<INPUT>();
+    pInput.ref = input;
+    SendInput(1, pInput, ffi.sizeOf<INPUT>());
+    free(pInput);
+  }
+
+  @override
+  Future<void> performKeyUp(int keyCode) async {
+    final input = _createKeyInput(keyCode, true);
+    final pInput = calloc<INPUT>();
+    pInput.ref = input;
+    SendInput(1, pInput, ffi.sizeOf<INPUT>());
+    free(pInput);
+  }
+
   @override
   Future<void> performClick({double? x, double? y}) async {
     if (x != null && y != null) {
@@ -209,9 +251,14 @@ class _WindowsMouseService implements MouseService {
   }
 
   INPUT _createKeyInput(int keyCode, bool isUp) {
+    var actualKey = keyCode;
+
+    // Windows uses 0 for key input wrapper, we use INPUT structure directly in createKeyInput?
+    // Oh wait, _createKeyInput creates an INPUT struct.
+
     final input = calloc<INPUT>().ref;
     input.type = INPUT_KEYBOARD;
-    input.ki.wVk = keyCode;
+    input.ki.wVk = actualKey;
     if (isUp) input.ki.dwFlags = KEYEVENTF_KEYUP;
     return input;
   }
@@ -246,6 +293,16 @@ class _WindowsMouseService implements MouseService {
 
 class _GenericMouseService implements MouseService {
   @override
+  Future<void> performKeyDown(int keyCode) async {
+    debugPrint("Key down not implemented for this platform yet.");
+  }
+
+  @override
+  Future<void> performKeyUp(int keyCode) async {
+    debugPrint("Key up not implemented for this platform yet.");
+  }
+
+  @override
   Future<void> performClick({double? x, double? y}) async {
     debugPrint("Mouse clicking not implemented for this platform yet.");
   }
@@ -255,6 +312,7 @@ class _GenericMouseService implements MouseService {
     return true;
   }
 
+  // ... rest of generic implementation
   @override
   Future<Map<String, double>?> getMousePosition() async {
     return null;
