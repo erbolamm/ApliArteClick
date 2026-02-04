@@ -43,6 +43,27 @@ La web está en la carpeta `/landing_page`.
     firebase deploy --only hosting
     ```
 
+## 🏪 Guía de Publicación en Tiendas (Stores)
+
+Para llevar ApliArte Click Pro a las tiendas oficiales, sigue estos pasos:
+
+### 🍏 Mac App Store
+1.  **Requisitos**: Cuenta de Apple Developer ($99/año).
+2.  **Preparación de App**:
+    - Activar **App Sandbox** en Xcode (`macos/Runner/Release.entitlements`).
+    - Añadir excepciones para eventos de entrada (Accesibilidad) si es posible, aunque Apple es estricto con auto-clickers en la tienda.
+3.  **App Store Connect**: Crea el registro de la app con capturas y descripción.
+4.  **Subida**: Usa la herramienta **Transporter** o Xcode para subir el build `.pkg` firmado.
+
+### 🪟 Microsoft Store (Windows)
+1.  **Requisitos**: Cuenta de Partner Center ($19 pago único para individuos).
+2.  **Empaquetado**:
+    - Usa el paquete `msix` para Flutter.
+    - Ejecuta: `flutter pub add msix` y luego `flutter pub run msix:create`.
+3.  **Certificación**: Sube el `.msix` al Partner Center y espera la validación de Microsoft.
+
+---
+
 ## 📝 Notas Técnicas
 - **Permisos de macOS**: La app requiere el permiso de `Coments` y `Accessibility` para simular eventos.
 - **Detección de Ratón**: Usamos `NSEvent.pressedMouseButtons` en macOS y `GetAsyncKeyState` en Windows para detectar el clic en el modo grabación.
