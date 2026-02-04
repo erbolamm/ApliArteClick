@@ -476,9 +476,15 @@ footer {
 
 /* Terminal Install Redesign */
 .terminal-install {
-    margin-top: 5rem;
+    margin-top: 3rem;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    /* Align left in hero */
+}
+
+.terminal-install.hero-install {
+    max-width: 600px;
+    /* Limit width in hero */
 }
 
 .terminal-content {
