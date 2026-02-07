@@ -7,12 +7,14 @@ class KeyPickerSheet extends StatefulWidget {
   final Function(LogicalKeyboardKey)? onKeySelected;
   final Function(List<ClickPoint>)? onKeysSelected; // Return ClickPoints
   final bool isActionKey;
+  final int defaultDelayMs;
 
   const KeyPickerSheet({
     super.key,
     this.onKeySelected,
     this.onKeysSelected,
     this.isActionKey = false,
+    this.defaultDelayMs = 1000,
   });
 
   @override
@@ -20,111 +22,36 @@ class KeyPickerSheet extends StatefulWidget {
 }
 
 class _KeyPickerSheetState extends State<KeyPickerSheet> {
-  final List<ClickPoint> _buffer = []; // Store ClickPoints directly
-  bool _isComboMode = false;
+  // Store the single consolidated shortcut point
+  ClickPoint? _recordedPoint;
+
+  // Track physically held keys for visualization
   final Set<LogicalKeyboardKey> _physicallyHeldKeys = {};
 
-  final List<LogicalKeyboardKey> _keys = [
-    // Modifiers
-    LogicalKeyboardKey.metaLeft, // Command
-    LogicalKeyboardKey.controlLeft, // Control
-    LogicalKeyboardKey.altLeft, // Option/Alt
-    LogicalKeyboardKey.shiftLeft, // Shift
-    LogicalKeyboardKey.fn, // Fn
-
-    LogicalKeyboardKey.tab, // Separator
-    LogicalKeyboardKey.enter,
-    LogicalKeyboardKey.space,
-    LogicalKeyboardKey.escape,
-    LogicalKeyboardKey.backspace,
-    LogicalKeyboardKey.delete,
-    // Arrows
-    LogicalKeyboardKey.arrowUp,
-    LogicalKeyboardKey.arrowDown,
-    LogicalKeyboardKey.arrowLeft,
-    LogicalKeyboardKey.arrowRight,
-    // Numbers
-    LogicalKeyboardKey.digit0,
-    LogicalKeyboardKey.digit1,
-    LogicalKeyboardKey.digit2,
-    LogicalKeyboardKey.digit3,
-    LogicalKeyboardKey.digit4,
-    LogicalKeyboardKey.digit5,
-    LogicalKeyboardKey.digit6,
-    LogicalKeyboardKey.digit7,
-    LogicalKeyboardKey.digit8,
-    LogicalKeyboardKey.digit9,
-    // Letters
-    LogicalKeyboardKey.keyA,
-    LogicalKeyboardKey.keyB,
-    LogicalKeyboardKey.keyC,
-    LogicalKeyboardKey.keyD,
-    LogicalKeyboardKey.keyE,
-    LogicalKeyboardKey.keyF,
-    LogicalKeyboardKey.keyG,
-    LogicalKeyboardKey.keyH,
-    LogicalKeyboardKey.keyI,
-    LogicalKeyboardKey.keyJ,
-    LogicalKeyboardKey.keyK,
-    LogicalKeyboardKey.keyL,
-    LogicalKeyboardKey.keyM,
-    LogicalKeyboardKey.keyN,
-    LogicalKeyboardKey.keyO,
-    LogicalKeyboardKey.keyP,
-    LogicalKeyboardKey.keyQ,
-    LogicalKeyboardKey.keyR,
-    LogicalKeyboardKey.keyS,
-    LogicalKeyboardKey.keyT,
-    LogicalKeyboardKey.keyU,
-    LogicalKeyboardKey.keyV,
-    LogicalKeyboardKey.keyW,
-    LogicalKeyboardKey.keyX,
-    LogicalKeyboardKey.keyY,
-    LogicalKeyboardKey.keyZ,
-    // F-Keys
-    LogicalKeyboardKey.f1,
-    LogicalKeyboardKey.f2,
-    LogicalKeyboardKey.f3,
-    LogicalKeyboardKey.f4,
-    LogicalKeyboardKey.f5,
-    LogicalKeyboardKey.f6,
-    LogicalKeyboardKey.f7,
-    LogicalKeyboardKey.f8,
-    LogicalKeyboardKey.f9,
-    LogicalKeyboardKey.f10,
-    LogicalKeyboardKey.f11,
-    LogicalKeyboardKey.f12,
-  ];
+  // To allow "Composing" a complex shortcut without triggering immediately?
+  // User wants: Press keys -> See them -> Confirm.
 
   String _getKeyLabel(LogicalKeyboardKey key) {
-    if (key == LogicalKeyboardKey.space) {
-      return "Espacio";
-    }
+    if (key == LogicalKeyboardKey.space) return "Espacio";
     if (key == LogicalKeyboardKey.metaLeft ||
-        key == LogicalKeyboardKey.metaRight) {
+        key == LogicalKeyboardKey.metaRight)
       return "Cmd ⌘";
-    }
     if (key == LogicalKeyboardKey.controlLeft ||
-        key == LogicalKeyboardKey.controlRight) {
+        key == LogicalKeyboardKey.controlRight)
       return "Ctrl ⌃";
-    }
-    if (key == LogicalKeyboardKey.altLeft ||
-        key == LogicalKeyboardKey.altRight) {
+    if (key == LogicalKeyboardKey.altLeft || key == LogicalKeyboardKey.altRight)
       return "Alt ⌥";
-    }
     if (key == LogicalKeyboardKey.shiftLeft ||
-        key == LogicalKeyboardKey.shiftRight) {
+        key == LogicalKeyboardKey.shiftRight)
       return "Shift ⇧";
-    }
-    if (key == LogicalKeyboardKey.enter) {
-      return "Enter ⏎";
-    }
-    if (key == LogicalKeyboardKey.backspace) {
-      return "Backspace ⌫";
-    }
-    if (key == LogicalKeyboardKey.escape) {
-      return "Esc";
-    }
+    if (key == LogicalKeyboardKey.enter) return "Enter ⏎";
+    if (key == LogicalKeyboardKey.backspace) return "Backspace ⌫";
+    if (key == LogicalKeyboardKey.escape) return "Esc";
+    if (key == LogicalKeyboardKey.tab) return "Tab ⇥";
+    if (key == LogicalKeyboardKey.arrowUp) return "↑";
+    if (key == LogicalKeyboardKey.arrowDown) return "↓";
+    if (key == LogicalKeyboardKey.arrowLeft) return "←";
+    if (key == LogicalKeyboardKey.arrowRight) return "→";
 
     return key.keyLabel;
   }
@@ -146,7 +73,7 @@ class _KeyPickerSheetState extends State<KeyPickerSheet> {
     for (final key in _physicallyHeldKeys) {
       if (key == LogicalKeyboardKey.metaLeft ||
           key == LogicalKeyboardKey.metaRight)
-        mods.add('meta');
+        mods.add('command');
       if (key == LogicalKeyboardKey.controlLeft ||
           key == LogicalKeyboardKey.controlRight)
         mods.add('control');
@@ -160,101 +87,59 @@ class _KeyPickerSheetState extends State<KeyPickerSheet> {
     return mods.toSet().toList(); // Unique
   }
 
-  void _addKey(LogicalKeyboardKey key) {
-    if (_isComboMode) {
-      // --- COMBO MODE LOGIC ---
-      if (_isModifier(key)) {
-        // Modifiers just contribute to the combo state, don't add action yet
-        return;
-      }
-
-      // It's a normal key. Combine with held modifiers.
-      final mods = _getIdentifiersForHeldModifiers();
-
-      String label = _getKeyLabel(key);
-      if (mods.isNotEmpty) {
-        // Create fancy label
-        final modLabels = mods
-            .map((m) {
-              switch (m) {
-                case 'meta':
-                  return 'Cmd';
-                case 'control':
-                  return 'Ctrl';
-                case 'alt':
-                  return 'Alt';
-                case 'shift':
-                  return 'Shift';
-                default:
-                  return m;
-              }
-            })
-            .join(" + ");
-        label = "$modLabels + $label";
-      }
-
+  void _processKeyEvent(KeyEvent event) {
+    if (event is KeyDownEvent) {
       setState(() {
-        _buffer.add(
-          ClickPoint(
-            key: key,
-            type: ActionType.keyboard,
-            keyEventType: KeyEventType.press,
-            modifiers: mods,
-            name: label,
-            delayAfterMs: 100,
-          ),
-        );
+        _physicallyHeldKeys.add(event.logicalKey);
       });
-      return;
+
+      // If it's NOT a modifier, it's the "trigger" key of the shortcut
+      if (!_isModifier(event.logicalKey)) {
+        _captureShortcut(event.logicalKey);
+      }
+    } else if (event is KeyUpEvent) {
+      setState(() {
+        _physicallyHeldKeys.remove(event.logicalKey);
+      });
+    }
+  }
+
+  void _captureShortcut(LogicalKeyboardKey triggerKey) {
+    // 1. Rename modifiers for the model
+    final mods = _getIdentifiersForHeldModifiers();
+
+    // 2. Build display name
+    String label = _getKeyLabel(triggerKey);
+    if (mods.isNotEmpty) {
+      final modLabels = mods
+          .map((m) {
+            switch (m) {
+              case 'command':
+                return 'Cmd';
+              case 'control':
+                return 'Ctrl';
+              case 'alt':
+                return 'Alt';
+              case 'shift':
+                return 'Shift';
+              default:
+                return m;
+            }
+          })
+          .join(" + ");
+      label = "$modLabels + $label";
     }
 
-    // --- SEQUENTIAL MODE LOGIC (Existing) ---
+    // 3. Create the point
     setState(() {
-      if (_isModifier(key)) {
-        // Toggle logic: Check if last action for this key was DOWN
-        // Find last occurrence of this key in buffer
-        var lastEntryIndex = _buffer.lastIndexWhere(
-          (p) => p.key?.keyId == key.keyId,
-        );
-
-      bool shouldRelease = false;
-        if (lastEntryIndex != -1) {
-          if (_buffer[lastEntryIndex].keyEventType == KeyEventType.down) {
-            shouldRelease = true;
-          }
-        }
-
-        if (shouldRelease) {
-          _buffer.add(
-            ClickPoint(
-              key: key,
-              type: ActionType.keyboard,
-              keyEventType: KeyEventType.up,
-              name: "Soltar ${_getKeyLabel(key)}",
-            ),
-          );
-        } else {
-          _buffer.add(
-            ClickPoint(
-              key: key,
-              type: ActionType.keyboard,
-              keyEventType: KeyEventType.down,
-              name: "Sostener ${_getKeyLabel(key)}",
-            ),
-          );
-        }
-      } else {
-        // Normal key press
-        _buffer.add(
-          ClickPoint(
-            key: key,
-            type: ActionType.keyboard,
-            keyEventType: KeyEventType.press, // default
-            name: "Tecla ${_getKeyLabel(key)}",
-            delayAfterMs: 100, // Default delay for typing
-          ),
-        );
-      }
+      _recordedPoint = ClickPoint(
+        key: triggerKey,
+        type: ActionType.keyboard,
+        keyEventType: KeyEventType.press, // Always press for shortcuts
+        modifiers: mods,
+        name: "Atajo: $label",
+        delayAfterMs: widget.defaultDelayMs,
+      );
     });
   }
 
@@ -263,197 +148,162 @@ class _KeyPickerSheetState extends State<KeyPickerSheet> {
     return Focus(
       autofocus: true,
       onKeyEvent: (node, event) {
-        if (event is KeyDownEvent) {
-          _physicallyHeldKeys.add(event.logicalKey);
-        } else if (event is KeyUpEvent) {
-          _physicallyHeldKeys.remove(event.logicalKey);
-        }
-
-        if (event is KeyDownEvent) {
-          // If pure modifier in combo mode, just consume it (it's tracked in _physicallyHeldKeys)
-          if (_isComboMode && _isModifier(event.logicalKey)) {
-            // Force UI update to show held keys? Not critical but good validation.
-            setState(() {});
-            return KeyEventResult.handled;
-          }
-
-          if (widget.isActionKey) {
-            _addKey(event.logicalKey);
-            return KeyEventResult.handled;
-          } else {
-            widget.onKeySelected?.call(event.logicalKey);
-            return KeyEventResult.handled;
-          }
-        }
-        return KeyEventResult.ignored;
+        _processKeyEvent(event);
+        return KeyEventResult.handled;
       },
       child: Container(
-        padding: const EdgeInsets.all(24),
-        height: MediaQuery.of(context).size.height * 0.7,
+        padding: const EdgeInsets.all(30),
+        height: 400, // Reduced height since we don't need the grid
+        decoration: const BoxDecoration(
+          color: Color(0xFF1E1E1E),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
+            // Header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.isActionKey
-                      ? "CREAR SECUENCIA DE TECLAS"
-                      : "SELECCIONA TECLA DE EMERGENCIA",
-                  style: const TextStyle(
+                const Text(
+                  "GRABAR ATAJO / TECLA",
+                  style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (widget.isActionKey)
-                  ElevatedButton.icon(
-                    onPressed: _buffer.isEmpty
-                        ? null
-                        : () {
-                            widget.onKeysSelected?.call(_buffer);
-                          },
-                    icon: const Icon(Icons.check, size: 18),
-                    label: Text("LISTO (${_buffer.length})"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close, color: Colors.white54),
+                ),
               ],
             ),
 
-            const SizedBox(height: 10),
+            const Spacer(),
 
-            // --- MODE TOGGLE ---
-            if (widget.isActionKey)
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white10,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.all(4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildModeButton("Secuencial 🎹", !_isComboMode, () {
-                      setState(() => _isComboMode = false);
-                    }),
-                    const SizedBox(width: 5),
-                    _buildModeButton("Combinado 🔗", _isComboMode, () {
-                      setState(() => _isComboMode = true);
-                    }),
-                  ],
+            // Visualization Area
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+              decoration: BoxDecoration(
+                color: Colors.black45,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: _recordedPoint != null
+                      ? Colors.greenAccent.withOpacity(0.5)
+                      : Colors.white12,
+                  width: 2,
                 ),
               ),
-
-            const SizedBox(height: 20),
-
-            // --- BUFFER DISPLAY ---
-            if (widget.isActionKey)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  color: Colors.black26,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white12),
-                ),
-                child: _buffer.isEmpty
-                    ? const Center(
-                        child: Text(
-                          "Pulsa teclas para añadirlas...",
-                          style: TextStyle(color: Colors.white38),
-                        ),
-                      )
-                    : Wrap(
+              child: Column(
+                children: [
+                  if (_recordedPoint == null) ...[
+                    const Icon(
+                      Icons.keyboard_outlined,
+                      size: 60,
+                      color: Colors.white24,
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Presiona tu combinación de teclas...",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white54, fontSize: 16),
+                    ),
+                    // Show held keys live preview
+                    if (_physicallyHeldKeys.isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      Wrap(
                         spacing: 8,
-                        runSpacing: 8,
-                        children: _buffer.asMap().entries.map((entry) {
-                          final idx = entry.key;
-                          final point = entry.value;
-
-                          Color chipColor;
-                          if (point.keyEventType == KeyEventType.down) {
-                            chipColor = Colors.redAccent.withAlpha(200);
-                          } else if (point.keyEventType == KeyEventType.up) {
-                            chipColor = Colors.orangeAccent.withAlpha(200);
-                          } else {
-                            chipColor = Colors.blueAccent.withAlpha(200);
-                          }
-
+                        children: _physicallyHeldKeys.map((k) {
                           return Chip(
-                            label: Text(
-                              point.name,
-                            ), // Use point name which has "Sostener..."
-                            backgroundColor: chipColor,
-                            labelStyle: const TextStyle(color: Colors.white),
-                            onDeleted: () {
-                              setState(() {
-                                _buffer.removeAt(idx);
-                              });
-                            },
-                            deleteIcon: const Icon(Icons.close, size: 14),
-                            deleteIconColor: Colors.white70,
+                            label: Text(_getKeyLabel(k)),
+                            backgroundColor: Colors.blueAccent.withOpacity(0.3),
+                            labelStyle: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           );
                         }).toList(),
                       ),
-              ),
-
-            // --- KEYBOARD GRID ---
-            Expanded(
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 5,
-                  runSpacing: 5,
-                  alignment: WrapAlignment.center,
-                  children: _keys
-                      .map(
-                        (key) => ElevatedButton(
-                          onPressed: () {
-                            if (widget.isActionKey) {
-                              _addKey(key);
-                            } else {
-                              widget.onKeySelected?.call(key);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withAlpha(10),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(_getKeyLabel(key)),
-                        ),
-                      )
-                      .toList(),
-                ),
+                    ],
+                  ] else ...[
+                    const Icon(
+                      Icons.check_circle_outline,
+                      size: 60,
+                      color: Colors.greenAccent,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      _recordedPoint!.name,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "¿Es correcto?",
+                      style: TextStyle(color: Colors.white38),
+                    ),
+                  ],
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildModeButton(String text, bool isSelected, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.blueAccent : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.white54,
-            fontWeight: FontWeight.bold,
-            fontSize: 13,
-          ),
+            const Spacer(),
+
+            // Action Buttons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (_recordedPoint != null) ...[
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _recordedPoint = null;
+                        _physicallyHeldKeys.clear();
+                      });
+                    },
+                    icon: const Icon(Icons.refresh, color: Colors.white60),
+                    label: const Text(
+                      "REINTENTAR",
+                      style: TextStyle(color: Colors.white60),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      if (widget.isActionKey && widget.onKeysSelected != null) {
+                        // Wrap in list as per old contract, but now it's just one consolidated point
+                        widget.onKeysSelected!([_recordedPoint!]);
+                      } else if (widget.onKeySelected != null &&
+                          _recordedPoint!.key != null) {
+                        // Fallback for single key usage (e.g. stop key)
+                        // But stop key doesn't use modifiers usually.
+                        widget.onKeySelected!(_recordedPoint!.key!);
+                      }
+                    },
+                    icon: const Icon(Icons.save),
+                    label: const Text("CONFIRMAR"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 15,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );

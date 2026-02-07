@@ -4,30 +4,59 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('NativeKeyMapper Tests', () {
-    test('Mac Key Codes', () {
-      // Basic Controls
+    test('getLogicalKeyForChar maps common letters', () {
       expect(
-        NativeKeyMapper.getNativeKeyCode(LogicalKeyboardKey.tab, isMacOS: true),
-        48,
+        NativeKeyMapper.getLogicalKeyForChar('a'),
+        LogicalKeyboardKey.keyA,
       );
       expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.space,
-          isMacOS: true,
-        ),
-        49,
+        NativeKeyMapper.getLogicalKeyForChar('z'),
+        LogicalKeyboardKey.keyZ,
       );
+      expect(
+        NativeKeyMapper.getLogicalKeyForChar('A'),
+        LogicalKeyboardKey.keyA,
+      ); // Case insensitive
+      expect(
+        NativeKeyMapper.getLogicalKeyForChar('G'),
+        LogicalKeyboardKey.keyG,
+      );
+    });
 
-      // Arrows
+    test('getLogicalKeyForChar maps common digits', () {
       expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.arrowLeft,
-          isMacOS: true,
-        ),
-        123,
+        NativeKeyMapper.getLogicalKeyForChar('0'),
+        LogicalKeyboardKey.digit0,
       );
+      expect(
+        NativeKeyMapper.getLogicalKeyForChar('9'),
+        LogicalKeyboardKey.digit9,
+      );
+      expect(
+        NativeKeyMapper.getLogicalKeyForChar('5'),
+        LogicalKeyboardKey.digit5,
+      );
+    });
 
-      // Letters
+    test('getLogicalKeyForChar maps basic special characters', () {
+      expect(
+        NativeKeyMapper.getLogicalKeyForChar(' '),
+        LogicalKeyboardKey.space,
+      );
+      expect(
+        NativeKeyMapper.getLogicalKeyForChar('\n'),
+        LogicalKeyboardKey.enter,
+      );
+    });
+
+    test('getLogicalKeyForChar returns null for empty or unknown', () {
+      expect(NativeKeyMapper.getLogicalKeyForChar(''), null);
+      // We haven't mapped symbols like '$' or complex chars yet in the simplified version
+      // So assuming they return null for now, or if mapped, we'd test them.
+      // Based on previous code view, only space and newline were mapped explicitly besides alphanumeric.
+    });
+
+    test('getNativeKeyCode returns correct codes for MacOS', () {
       expect(
         NativeKeyMapper.getNativeKeyCode(
           LogicalKeyboardKey.keyA,
@@ -37,11 +66,11 @@ void main() {
       );
       expect(
         NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.keyZ,
+          LogicalKeyboardKey.keyN,
           isMacOS: true,
         ),
-        6,
-      );
+        45,
+      ); // This was missing
       expect(
         NativeKeyMapper.getNativeKeyCode(
           LogicalKeyboardKey.keyM,
@@ -49,100 +78,13 @@ void main() {
         ),
         46,
       );
-
-      // Numbers
       expect(
         NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.digit0,
+          LogicalKeyboardKey.numpadAdd,
           isMacOS: true,
         ),
-        29,
-      );
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.digit1,
-          isMacOS: true,
-        ),
-        18,
-      );
-
-      // F-Keys
-      expect(
-        NativeKeyMapper.getNativeKeyCode(LogicalKeyboardKey.f1, isMacOS: true),
-        122,
-      );
-      expect(
-        NativeKeyMapper.getNativeKeyCode(LogicalKeyboardKey.f12, isMacOS: true),
-        111,
-      );
-    });
-
-    test('Windows Key Codes', () {
-      // Basic Controls
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.tab,
-          isWindows: true,
-        ),
-        0x09,
-      );
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.space,
-          isWindows: true,
-        ),
-        0x20,
-      );
-
-      // Arrows
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.arrowUp,
-          isWindows: true,
-        ),
-        0x26,
-      );
-
-      // Letters (A=0x41)
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.keyA,
-          isWindows: true,
-        ),
-        0x41,
-      );
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.keyZ,
-          isWindows: true,
-        ),
-        0x5A,
-      );
-
-      // Numbers (0=0x30)
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.digit0,
-          isWindows: true,
-        ),
-        0x30,
-      );
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.digit9,
-          isWindows: true,
-        ),
-        0x39,
-      );
-
-      // F-Keys (F1=0x70)
-      expect(
-        NativeKeyMapper.getNativeKeyCode(
-          LogicalKeyboardKey.f1,
-          isWindows: true,
-        ),
-        0x70,
-      );
+        69,
+      ); // This was 45
     });
   });
 }

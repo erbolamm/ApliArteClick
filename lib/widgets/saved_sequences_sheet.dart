@@ -14,45 +14,44 @@ class ActionLibrarySheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 2,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade900,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(2),
-              ),
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.7,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade900,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 10),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.white24,
+              borderRadius: BorderRadius.circular(2),
             ),
-            const SizedBox(height: 10),
-            TabBar(
-              indicatorColor: Colors.blueAccent,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white38,
-              tabs: const [
-                Tab(text: "Mis Acciones"),
-                Tab(text: "Predefinidas 🎁"),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                const Icon(Icons.library_books, color: Colors.blueAccent),
+                const SizedBox(width: 10),
+                Text(
+                  "Mis Acciones",
+                  style: GoogleFonts.outfit(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _MyActionsTab(onSelected: onSelected),
-                  _PresetsTab(onSelected: onSelected),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+          const Divider(color: Colors.white10),
+          Expanded(child: _MyActionsTab(onSelected: onSelected)),
+        ],
       ),
     );
   }
@@ -66,10 +65,6 @@ class _MyActionsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.watch(clickSettingsProvider.notifier);
-    // accessing future provider or state... in original code it was getSavedSequences() which returns Future
-    // We need to handle that. Ideally the notifier exposes the list in state, but simpler to use FutureBuilder or similar
-    // if the original code was doing `await notifier.getSavedSequences()`.
-    // Let's assume we can call it.
 
     return FutureBuilder<List<SavedSequence>>(
       future: notifier.getSavedSequences(),
@@ -124,8 +119,7 @@ class _MyActionsTab extends ConsumerWidget {
                       ),
                       onPressed: () async {
                         await notifier.deleteSequence(seq.id);
-                        (context as Element)
-                            .markNeedsBuild(); // Force rebuild hack or use proper state
+                        (context as Element).markNeedsBuild();
                       },
                     ),
                     const Icon(Icons.add_circle, color: Colors.blueAccent),
@@ -135,104 +129,6 @@ class _MyActionsTab extends ConsumerWidget {
               ),
             );
           },
-        );
-      },
-    );
-  }
-}
-
-class _PresetsTab extends StatelessWidget {
-  final Function(List<ClickPoint>) onSelected;
-
-  const _PresetsTab({required this.onSelected});
-
-  // Generating presets on the fly
-  List<SavedSequence> get presets => [
-    SavedSequence(
-      name: "Cambiar App (Mac)",
-      points: [
-        ClickPoint(
-          key: LogicalKeyboardKey.metaLeft,
-          type: ActionType.keyboard,
-          keyEventType: KeyEventType.down,
-          name: "Sostener Cmd",
-        ),
-        ClickPoint(
-          key: LogicalKeyboardKey.tab,
-          type: ActionType.keyboard,
-          keyEventType: KeyEventType.press,
-          name: "Tecla Tab",
-          delayAfterMs: 200,
-        ),
-        ClickPoint(
-          key: LogicalKeyboardKey.metaLeft,
-          type: ActionType.keyboard,
-          keyEventType: KeyEventType.up,
-          name: "Soltar Cmd",
-        ),
-      ],
-    ),
-    SavedSequence(
-      name: "Copiar (Cmd+C)",
-      points: [
-        ClickPoint(
-          key: LogicalKeyboardKey.keyC,
-          type: ActionType.keyboard,
-          keyEventType: KeyEventType.press,
-          modifiers: ['meta'],
-          name: "Cmd + C",
-        ),
-      ],
-    ),
-    SavedSequence(
-      name: "Pegar (Cmd+V)",
-      points: [
-        ClickPoint(
-          key: LogicalKeyboardKey.keyV,
-          type: ActionType.keyboard,
-          keyEventType: KeyEventType.press,
-          modifiers: ['meta'],
-          name: "Cmd + V",
-        ),
-      ],
-    ),
-    SavedSequence(
-      name: "Cerrar Ventana (Cmd+W)",
-      points: [
-        ClickPoint(
-          key: LogicalKeyboardKey.keyW,
-          type: ActionType.keyboard,
-          keyEventType: KeyEventType.press,
-          modifiers: ['meta'],
-          name: "Cmd + W",
-        ),
-      ],
-    ),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: presets.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
-      itemBuilder: (context, index) {
-        final seq = presets[index];
-        return ListTile(
-          tileColor: Colors.white.withAlpha(10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          leading: const Icon(Icons.star, color: Colors.orangeAccent),
-          title: Text(seq.name, style: const TextStyle(color: Colors.white)),
-          subtitle: Text(
-            seq.points.map((p) => p.name).join(" → "),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.white38, fontSize: 12),
-          ),
-          trailing: const Icon(Icons.add_circle, color: Colors.greenAccent),
-          onTap: () => onSelected(seq.points),
         );
       },
     );

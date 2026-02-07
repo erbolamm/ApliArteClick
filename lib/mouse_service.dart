@@ -11,7 +11,12 @@ import 'package:win32/win32.dart';
 /// Provides cross-platform mouse interaction capabilities.
 abstract class MouseService {
   /// Performs a mouse click at the specified global coordinates (optional).
-  Future<void> performClick({double? x, double? y});
+  Future<void> performClick({
+    double? x,
+    double? y,
+    String button = 'left',
+    int clickCount = 1,
+  });
 
   /// Checks if the application has the necessary permissions to control the mouse.
   Future<bool> checkPermissions();
@@ -20,7 +25,11 @@ abstract class MouseService {
   Future<Map<String, double>?> getMousePosition();
 
   /// Checks if the left mouse button is currently pressed.
+  @Deprecated('Use getPressedButtons instead')
   Future<bool> isMouseButtonPressed();
+
+  /// Returns a bitmask of pressed mouse buttons.
+  Future<int> getPressedButtons();
 
   /// Simulates a key down event.
   Future<void> performKeyDown(int keyCode);
@@ -33,6 +42,12 @@ abstract class MouseService {
 
   /// Switches to the next application (Cmd+Tab or Alt+Tab).
   Future<void> switchApplication();
+
+  /// Shows a preview icon at the specified global coordinates.
+  Future<void> showPreview(double x, double y);
+
+  /// Hides the preview icon.
+  Future<void> hidePreview();
 
   static MouseService create() {
     if (Platform.isMacOS) {
@@ -69,9 +84,19 @@ class _MacOSMouseService implements MouseService {
 
   // ... existing methods ...
   @override
-  Future<void> performClick({double? x, double? y}) async {
+  Future<void> performClick({
+    double? x,
+    double? y,
+    String button = 'left',
+    int clickCount = 1,
+  }) async {
     try {
-      await _channel.invokeMethod('performClick', {'x': x, 'y': y});
+      await _channel.invokeMethod('performClick', {
+        'x': x,
+        'y': y,
+        'button': button,
+        'clickCount': clickCount,
+      });
     } on PlatformException catch (e) {
       debugPrint("Failed to perform click: ${e.message}");
     }
@@ -104,15 +129,25 @@ class _MacOSMouseService implements MouseService {
   }
 
   @override
+  @override
   Future<bool> isMouseButtonPressed() async {
     try {
-      final bool? isPressed = await _channel.invokeMethod(
-        'isMouseButtonPressed',
-      );
-      return isPressed ?? false;
-    } on PlatformException catch (e) {
-      debugPrint("Failed to check mouse button: ${e.message}");
+      // Fallback for older interface, strictly checks left button
+      final buttons = await getPressedButtons();
+      return (buttons & 1) != 0;
+    } catch (e) {
       return false;
+    }
+  }
+
+  @override
+  Future<int> getPressedButtons() async {
+    try {
+      final int? mask = await _channel.invokeMethod('getPressedMouseButtons');
+      return mask ?? 0;
+    } on PlatformException catch (e) {
+      debugPrint("Failed to get pressed buttons: ${e.message}");
+      return 0;
     }
   }
 
@@ -134,6 +169,24 @@ class _MacOSMouseService implements MouseService {
       await _channel.invokeMethod('switchApplication');
     } on PlatformException catch (e) {
       debugPrint("Failed to switch application: ${e.message}");
+    }
+  }
+
+  @override
+  Future<void> showPreview(double x, double y) async {
+    try {
+      await _channel.invokeMethod('showPreview', {'x': x, 'y': y});
+    } on PlatformException catch (e) {
+      debugPrint("Failed to show preview: ${e.message}");
+    }
+  }
+
+  @override
+  Future<void> hidePreview() async {
+    try {
+      await _channel.invokeMethod('hidePreview');
+    } on PlatformException catch (e) {
+      debugPrint("Failed to hide preview: ${e.message}");
     }
   }
 }
@@ -159,7 +212,12 @@ class _WindowsMouseService implements MouseService {
   }
 
   @override
-  Future<void> performClick({double? x, double? y}) async {
+  Future<void> performClick({
+    double? x,
+    double? y,
+    String button = 'left',
+    int clickCount = 1,
+  }) async {
     if (x != null && y != null) {
       // Set cursor position
       SetCursorPos(x.round(), y.round());
@@ -200,9 +258,17 @@ class _WindowsMouseService implements MouseService {
 
   @override
   Future<bool> isMouseButtonPressed() async {
-    // Check if left mouse button is pressed using GetAsyncKeyState
     final state = GetAsyncKeyState(VK_LBUTTON);
     return (state & 0x8000) != 0;
+  }
+
+  @override
+  Future<int> getPressedButtons() async {
+    int mask = 0;
+    if ((GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0) mask |= 1;
+    if ((GetAsyncKeyState(VK_RBUTTON) & 0x8000) != 0) mask |= 2;
+    // MBUTTON is 4
+    return mask;
   }
 
   @override
@@ -289,6 +355,16 @@ class _WindowsMouseService implements MouseService {
     SendInput(4, inputs, ffi.sizeOf<INPUT>());
     free(inputs);
   }
+
+  @override
+  Future<void> showPreview(double x, double y) async {
+    // Windows preview not implemented yet
+  }
+
+  @override
+  Future<void> hidePreview() async {
+    // Windows preview not implemented yet
+  }
 }
 
 class _GenericMouseService implements MouseService {
@@ -303,7 +379,12 @@ class _GenericMouseService implements MouseService {
   }
 
   @override
-  Future<void> performClick({double? x, double? y}) async {
+  Future<void> performClick({
+    double? x,
+    double? y,
+    String button = 'left',
+    int clickCount = 1,
+  }) async {
     debugPrint("Mouse clicking not implemented for this platform yet.");
   }
 
@@ -324,6 +405,11 @@ class _GenericMouseService implements MouseService {
   }
 
   @override
+  Future<int> getPressedButtons() async {
+    return 0;
+  }
+
+  @override
   Future<void> performKeyPress(int keyCode, {List<String>? modifiers}) async {
     debugPrint("Keyboard press not implemented for this platform yet.");
   }
@@ -332,4 +418,10 @@ class _GenericMouseService implements MouseService {
   Future<void> switchApplication() async {
     debugPrint("Application switching not implemented for this platform yet.");
   }
+
+  @override
+  Future<void> showPreview(double x, double y) async {}
+
+  @override
+  Future<void> hidePreview() async {}
 }

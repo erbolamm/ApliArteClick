@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:apliarte_click/widgets/build_main_button.dart';
 import 'package:apliarte_click/widgets/build_stats.dart';
+import 'package:apliarte_click/screens/info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +38,7 @@ void main() async {
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
     titleBarStyle: TitleBarStyle.hidden,
-    alwaysOnTop: true,
+    alwaysOnTop: false,
   );
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -73,7 +74,7 @@ class ApliArteClickApp extends StatelessWidget {
 }
 
 /// Types of actions the auto-clicker can perform.
-enum ActionType { mouseClick, keyboard }
+enum ActionType { mouseClick, keyboard, text, stop, pause, loop }
 
 /// Application State Model
 /// Holds all configuration and live status of the auto-clicker.
@@ -97,6 +98,7 @@ class ClickSettings {
   final double liveX;
   final double liveY;
   final LogicalKeyboardKey shortcut;
+  final bool isAlwaysOnTop;
 
   // Multi-Clip Specific
   final List<ClickPoint> points;
@@ -125,6 +127,7 @@ class ClickSettings {
     this.points = const [],
     this.currentPointIndex = -1,
     this.multiClickDefaultDelayMs = 10000,
+    this.isAlwaysOnTop = false,
   });
 
   int get totalIntervalMs {
@@ -158,6 +161,7 @@ class ClickSettings {
     double? liveX,
     double? liveY,
     LogicalKeyboardKey? shortcut,
+    bool? isAlwaysOnTop,
   }) {
     return ClickSettings(
       isRunning: isRunning ?? this.isRunning,
@@ -184,6 +188,7 @@ class ClickSettings {
       currentPointIndex: currentPointIndex ?? this.currentPointIndex,
       multiClickDefaultDelayMs:
           multiClickDefaultDelayMs ?? this.multiClickDefaultDelayMs,
+      isAlwaysOnTop: isAlwaysOnTop ?? this.isAlwaysOnTop,
     );
   }
 }
@@ -205,6 +210,14 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
   Timer? _timer;
   final _mouseService = MouseService.create();
   final Set<int> _heldKeys = {}; // Track held keys for safety release
+
+  // Smart Recording State
+  Timer? _clickCheckTimer;
+  Timer? _dodgeTimer;
+  Timer? _finalizeClickTimer;
+  int _lastMask = 0;
+  int _recordButton = 0;
+  int _recordClickCount = 0;
 
   void _initHotkeys() async {
     try {
@@ -315,13 +328,87 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
     _runSequence();
   }
 
+  Future<void> _executePoint(ClickPoint point) async {
+    try {
+      switch (point.type) {
+        case ActionType.mouseClick:
+          await _mouseService.performClick(
+            x: point.x,
+            y: point.y,
+            button: point.mouseButton,
+            clickCount: point.clickCount,
+          );
+          break;
+        case ActionType.keyboard:
+          if (point.key != null) {
+            final code = _getNativeKeyCode(point.key!);
+            if (code != null) {
+              int repeats = point.clickCount.clamp(1, 999);
+              for (int i = 0; i < repeats; i++) {
+                switch (point.keyEventType) {
+                  case KeyEventType.down:
+                    await _mouseService.performKeyDown(code);
+                    _heldKeys.add(code);
+                    break;
+                  case KeyEventType.up:
+                    await _mouseService.performKeyUp(code);
+                    _heldKeys.remove(code);
+                    break;
+                  case KeyEventType.press:
+                    await _mouseService.performKeyPress(
+                      code,
+                      modifiers: point.modifiers,
+                    );
+                    break;
+                }
+                if (i < repeats - 1)
+                  await Future.delayed(const Duration(milliseconds: 50));
+              }
+            }
+          }
+          break;
+        case ActionType.text:
+          if (point.text != null) {
+            for (int i = 0; i < point.text!.length; i++) {
+              final key = NativeKeyMapper.getLogicalKeyForChar(point.text![i]);
+              if (key != null) {
+                final code = _getNativeKeyCode(key);
+                if (code != null) {
+                  await _mouseService.performKeyPress(code);
+                  if (i < point.text!.length - 1)
+                    await Future.delayed(const Duration(milliseconds: 50));
+                }
+              }
+            }
+          }
+          break;
+        case ActionType.pause:
+          // Just a placeholder for the delay that follows
+          break;
+        case ActionType.stop:
+          await stop();
+          break;
+        case ActionType.loop:
+          for (int i = 0; i < point.loopCount; i++) {
+            for (final nested in point.nestedPoints) {
+              if (!state.isRunning) return;
+              await _executePoint(nested);
+              await Future.delayed(Duration(milliseconds: nested.delayAfterMs));
+            }
+          }
+          break;
+      }
+    } catch (e) {
+      debugPrint("Error executing point: $e");
+    }
+    state = state.copyWith(clickCount: state.clickCount + 1);
+  }
+
   Future<void> _runSequence() async {
     if (!state.isRunning) return;
 
     // --- GLOBAL KEYBOARD MODE ---
     if (state.actionType == ActionType.keyboard) {
-      // ... existing global logic ...
-      // (Keeping this for backward compatibility if needed, though mostly using points now)
       if (state.keyboardActionKey != null) {
         final code = _getNativeKeyCode(state.keyboardActionKey!);
         if (code != null) {
@@ -354,61 +441,20 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
     int idx = state.currentPointIndex;
     if (idx < 0 || idx >= state.points.length) idx = 0;
 
-    // Execute current point
     state = state.copyWith(currentPointIndex: idx);
     final point = state.points[idx];
 
-    try {
-      if (point.type == ActionType.keyboard && point.key != null) {
-        final code = _getNativeKeyCode(point.key!);
-        if (code != null) {
-          // Handle KeyEventType
-          switch (point.keyEventType) {
-            case KeyEventType.down:
-              await _mouseService.performKeyDown(code);
-              _heldKeys.add(code);
-              break;
-            case KeyEventType.up:
-              await _mouseService.performKeyUp(code);
-              _heldKeys.remove(code);
-              break;
-            case KeyEventType.press:
-              await _mouseService.performKeyPress(
-                code,
-                modifiers: point.modifiers,
-              );
-              break;
-          }
-        }
-      } else {
-        await _mouseService.performClick(x: point.x, y: point.y);
-      }
-    } catch (e) {
-      debugPrint("Error executing point $idx: $e");
-    }
+    await _executePoint(point);
 
-    state = state.copyWith(clickCount: state.clickCount + 1);
+    if (state.isRunning && point.type != ActionType.stop) {
+      int delay = point.delayAfterMs;
+      if (delay < 10) delay = 10;
 
-    // Wait for the pointing delay
-    int delay = point.delayAfterMs;
-    // VERY IMPORTANT: For hold events, we might want minimal delay if it's a combo
-    // But user controls delay.
-    if (delay < 10) delay = 10; // Allow faster execution for combos
-
-    if (state.isRunning) {
       _timer = Timer(Duration(milliseconds: delay), () {
-        // Next point
         int nextIdx = idx + 1;
-
-        // Auto-release logic at end of sequence loop?
-        // If we loop, we might want to release everything before starting over?
-        // Or if we stop?
         if (nextIdx >= state.points.length) {
           nextIdx = 0;
-          // Ideally release all keys here if not looping strictly?
-          // For now, let's assume user programs explicit UP events or we handle it in stop().
         }
-
         state = state.copyWith(currentPointIndex: nextIdx);
         _runSequence();
       });
@@ -451,17 +497,6 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
 
   void updateActionType(ActionType type) {
     state = state.copyWith(actionType: type);
-  }
-
-  void setAltTabPreset() {
-    state = state.copyWith(
-      actionType: ActionType.keyboard,
-      keyboardActionKey: LogicalKeyboardKey.tab,
-      useAlt: !Platform.isMacOS,
-      useCommand: Platform.isMacOS,
-      useControl: false,
-      useShift: false,
-    );
   }
 
   Future<void> updatePoints(List<ClickPoint> points) async {
@@ -544,21 +579,68 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
     updateDefaultDelay(state.totalIntervalMs);
   }
 
-  Timer? _dodgeTimer;
-  Timer? _clickCheckTimer;
+  // --- Preview Helpers ---
+  Future<void> showPreview(double x, double y) async {
+    await _mouseService.showPreview(x, y);
+  }
+
+  Future<void> hidePreview() async {
+    await _mouseService.hidePreview();
+  }
 
   Future<void> startPicking() async {
     state = state.copyWith(isPickingPosition: true);
 
+    // Reset recording state
+    _lastMask = 0;
+    _recordButton = 0;
+    _recordClickCount = 0;
+    _finalizeClickTimer?.cancel();
+
     // Monitor for mouse clicks to save position automatically
-    _clickCheckTimer = Timer.periodic(const Duration(milliseconds: 50), (
+    _clickCheckTimer = Timer.periodic(const Duration(milliseconds: 30), (
       timer,
     ) async {
-      final isClicking = await _mouseService.isMouseButtonPressed();
-      if (isClicking) {
-        // User clicked - save position immediately
-        endPicking();
+      final int currentMask = await _mouseService.getPressedButtons();
+
+      // Leading Edge (Down)
+      if (currentMask > 0 && _lastMask == 0) {
+        if (_finalizeClickTimer != null && _finalizeClickTimer!.isActive) {
+          // Timer active means we are waiting for multi-click
+          if (currentMask == _recordButton) {
+            // Same button pressed again -> Increment count
+            _recordClickCount++;
+            _finalizeClickTimer!.cancel();
+            // Feedback? Beep?
+          } else {
+            // Different button? Could finalize previous and start new,
+            // but for simplicity, let's just ignore or reset.
+            // Resetting for safety.
+            _finalizeClickTimer!.cancel();
+            _recordButton = currentMask;
+            _recordClickCount = 1;
+            debugPrint("Button changed during multi-click wait. Resetting.");
+          }
+        } else {
+          // First click
+          _recordButton = currentMask;
+          _recordClickCount = 1;
+        }
       }
+
+      // Trailing Edge (Up)
+      if (currentMask == 0 && _lastMask > 0) {
+        // Released. specific button release logic might be complex with chords,
+        // but assuming single button usage for now.
+
+        // Start timer to verify if it's the end or user will click again
+        _finalizeClickTimer = Timer(const Duration(milliseconds: 350), () {
+          // Timeout reached -> Save the point
+          endPicking(buttonMask: _recordButton, count: _recordClickCount);
+        });
+      }
+
+      _lastMask = currentMask;
     });
 
     _dodgeTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
@@ -619,20 +701,39 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
     state = state.copyWith(liveX: pos.dx, liveY: pos.dy);
   }
 
-  void endPicking() async {
+  void endPicking({int buttonMask = 1, int count = 1}) async {
     _dodgeTimer?.cancel();
     _dodgeTimer = null;
     _clickCheckTimer?.cancel();
     _clickCheckTimer = null;
+    _finalizeClickTimer?.cancel();
+
+    if (!state.isPickingPosition) return;
 
     final osPos = await _mouseService.getMousePosition();
 
     if (osPos != null) {
-      // Add new point (Always Multi Logic Now)
+      String btnName = 'left';
+      String nameSuffix = '';
+
+      if (buttonMask == 2) btnName = 'right';
+      if (buttonMask == 4) btnName = 'middle';
+
+      if (btnName == 'right') {
+        nameSuffix = ' (Derecho)';
+      }
+
+      if (count > 1) {
+        nameSuffix += ' x$count';
+      }
+
+      // Add new point
       final newPoint = ClickPoint(
         x: osPos['x'],
         y: osPos['y'],
-        name: "Punto ${state.points.length + 1}",
+        name: "Punto ${state.points.length + 1}$nameSuffix",
+        mouseButton: btnName,
+        clickCount: count,
         delayAfterMs: state.multiClickDefaultDelayMs,
       );
       addPoint(newPoint);
@@ -644,6 +745,12 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
 
   void updateShowWelcome(bool show) {
     state = state.copyWith(showWelcome: show);
+  }
+
+  void toggleAlwaysOnTop() async {
+    final newState = !state.isAlwaysOnTop;
+    await windowManager.setAlwaysOnTop(newState);
+    state = state.copyWith(isAlwaysOnTop: newState);
   }
 
   void clearPosition() {
@@ -1006,15 +1113,84 @@ class MainScreen extends ConsumerWidget {
               ),
             ),
 
+            // Info Button
+            IconButton(
+              icon: const Icon(
+                Icons.info_outline,
+                size: 20,
+                color: Colors.white54,
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  barrierColor: Colors.black54,
+                  builder: (ctx) => const InfoScreen(),
+                );
+              },
+              tooltip: "Instrucciones",
+            ),
+
             _buildAppsButton(),
             BuildStats(settings: settings),
-            const SizedBox(width: 12),
-            Container(height: 24, width: 1, color: Colors.white10),
             const SizedBox(width: 10),
+
+            // Pin Button
             IconButton(
-              icon: const Icon(Icons.close, size: 18, color: Colors.white38),
-              onPressed: () => exit(0),
-              tooltip: "Cerrar",
+              icon: Icon(
+                settings.isAlwaysOnTop
+                    ? Icons.push_pin
+                    : Icons.push_pin_outlined,
+                size: 18,
+                color: settings.isAlwaysOnTop
+                    ? Colors.blueAccent
+                    : Colors.white24,
+              ),
+              onPressed: notifier.toggleAlwaysOnTop,
+              tooltip: settings.isAlwaysOnTop
+                  ? "Desanclar ventana"
+                  : "Fijar ventana encima",
+            ),
+
+            const SizedBox(width: 4),
+            // Windows/custom style window controls
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 0,
+              children: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.remove,
+                    size: 18,
+                    color: Colors.white54,
+                  ),
+                  onPressed: () async => await windowManager.minimize(),
+                  tooltip: "Minimizar",
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.crop_square,
+                    size: 18,
+                    color: Colors.white54,
+                  ),
+                  onPressed: () async {
+                    if (await windowManager.isMaximized()) {
+                      await windowManager.unmaximize();
+                    } else {
+                      await windowManager.maximize();
+                    }
+                  },
+                  tooltip: "Maximizar",
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    size: 18,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () => exit(0),
+                  tooltip: "Cerrar",
+                ),
+              ],
             ),
           ],
         ),

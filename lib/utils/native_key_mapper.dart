@@ -78,8 +78,9 @@ class NativeKeyMapper {
     if (key == LogicalKeyboardKey.backslash) return 42;
     if (key == LogicalKeyboardKey.comma) return 43;
     if (key == LogicalKeyboardKey.slash) return 44;
-    if (key == LogicalKeyboardKey.numpadAdd) return 45;
+    if (key == LogicalKeyboardKey.numpadAdd) return 69;
     if (key == LogicalKeyboardKey.keyM) return 46;
+    if (key == LogicalKeyboardKey.keyN) return 45;
     if (key == LogicalKeyboardKey.period) return 47;
 
     // --- Function Keys ---
@@ -129,6 +130,83 @@ class NativeKeyMapper {
         key.keyId <= LogicalKeyboardKey.f12.keyId) {
       return 0x70 + (key.keyId - LogicalKeyboardKey.f1.keyId);
     }
+
+    return null;
+  }
+
+  static LogicalKeyboardKey? getLogicalKeyForChar(String char) {
+    if (char.isEmpty) return null;
+    final lowerChar = char.toLowerCase();
+
+    // Map common chars to keys
+    // Letters
+    if (lowerChar.length == 1) {
+      if (lowerChar.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
+          lowerChar.codeUnitAt(0) <= 'z'.codeUnitAt(0)) {
+        const letterMap = {
+          'a': LogicalKeyboardKey.keyA,
+          'b': LogicalKeyboardKey.keyB,
+          'c': LogicalKeyboardKey.keyC,
+          'd': LogicalKeyboardKey.keyD,
+          'e': LogicalKeyboardKey.keyE,
+          'f': LogicalKeyboardKey.keyF,
+          'g': LogicalKeyboardKey.keyG,
+          'h': LogicalKeyboardKey.keyH,
+          'i': LogicalKeyboardKey.keyI,
+          'j': LogicalKeyboardKey.keyJ,
+          'k': LogicalKeyboardKey.keyK,
+          'l': LogicalKeyboardKey.keyL,
+          'm': LogicalKeyboardKey.keyM,
+          'n': LogicalKeyboardKey.keyN,
+          'o': LogicalKeyboardKey.keyO,
+          'p': LogicalKeyboardKey.keyP,
+          'q': LogicalKeyboardKey.keyQ,
+          'r': LogicalKeyboardKey.keyR,
+          's': LogicalKeyboardKey.keyS,
+          't': LogicalKeyboardKey.keyT,
+          'u': LogicalKeyboardKey.keyU,
+          'v': LogicalKeyboardKey.keyV,
+          'w': LogicalKeyboardKey.keyW,
+          'x': LogicalKeyboardKey.keyX,
+          'y': LogicalKeyboardKey.keyY,
+          'z': LogicalKeyboardKey.keyZ,
+        };
+        return letterMap[lowerChar];
+      }
+
+      // Numbers
+      if (lowerChar.codeUnitAt(0) >= '0'.codeUnitAt(0) &&
+          lowerChar.codeUnitAt(0) <= '9'.codeUnitAt(0)) {
+        const digitMap = {
+          '0': LogicalKeyboardKey.digit0,
+          '1': LogicalKeyboardKey.digit1,
+          '2': LogicalKeyboardKey.digit2,
+          '3': LogicalKeyboardKey.digit3,
+          '4': LogicalKeyboardKey.digit4,
+          '5': LogicalKeyboardKey.digit5,
+          '6': LogicalKeyboardKey.digit6,
+          '7': LogicalKeyboardKey.digit7,
+          '8': LogicalKeyboardKey.digit8,
+          '9': LogicalKeyboardKey.digit9,
+        };
+        return digitMap[lowerChar];
+      }
+    }
+
+    // Special Chars (Common)
+    if (char == ' ') return LogicalKeyboardKey.space;
+    if (char == '\n') return LogicalKeyboardKey.enter;
+    if (char == '\t') return LogicalKeyboardKey.tab;
+    if (char == '.') return LogicalKeyboardKey.period;
+    if (char == ',') return LogicalKeyboardKey.comma;
+    if (char == ';') return LogicalKeyboardKey.semicolon;
+    if (char == '\'') return LogicalKeyboardKey.quote;
+    if (char == '[') return LogicalKeyboardKey.bracketLeft;
+    if (char == ']') return LogicalKeyboardKey.bracketRight;
+    if (char == '\\') return LogicalKeyboardKey.backslash;
+    if (char == '/') return LogicalKeyboardKey.slash;
+    if (char == '-') return LogicalKeyboardKey.minus;
+    if (char == '=') return LogicalKeyboardKey.equal;
 
     return null;
   }

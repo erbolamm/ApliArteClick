@@ -19,6 +19,13 @@ class ClickPoint {
   final LogicalKeyboardKey? key;
   final List<String> modifiers;
   final KeyEventType keyEventType;
+  final String mouseButton;
+  final int clickCount;
+  final String? text;
+
+  // Advanced Flow
+  final List<ClickPoint> nestedPoints;
+  final int loopCount;
 
   ClickPoint({
     String? id,
@@ -30,6 +37,11 @@ class ClickPoint {
     this.key,
     this.modifiers = const [],
     this.keyEventType = KeyEventType.press,
+    this.mouseButton = 'left',
+    this.clickCount = 1,
+    this.text,
+    this.nestedPoints = const [],
+    this.loopCount = 1,
   }) : id = id ?? const Uuid().v4();
 
   ClickPoint copyWith({
@@ -41,6 +53,11 @@ class ClickPoint {
     LogicalKeyboardKey? key,
     List<String>? modifiers,
     KeyEventType? keyEventType,
+    String? mouseButton,
+    int? clickCount,
+    String? text,
+    List<ClickPoint>? nestedPoints,
+    int? loopCount,
   }) {
     return ClickPoint(
       id: id,
@@ -52,26 +69,35 @@ class ClickPoint {
       key: key ?? this.key,
       modifiers: modifiers ?? this.modifiers,
       keyEventType: keyEventType ?? this.keyEventType,
+      mouseButton: mouseButton ?? this.mouseButton,
+      clickCount: clickCount ?? this.clickCount,
+      text: text ?? this.text,
+      nestedPoints: nestedPoints ?? this.nestedPoints,
+      loopCount: loopCount ?? this.loopCount,
     );
   }
 
   @override
   String toString() {
-    return 'ClickPoint(name: $name, type: $type, x: $x, y: $y, delay: $delayAfterMs, event: $keyEventType)';
+    return 'ClickPoint(name: $name, type: $type, x: $x, y: $y, delay: $delayAfterMs, loop: $loopCount)';
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
-      'type': type.index, // Store enum index
+      'type': type.index,
       'x': x,
       'y': y,
       'delayAfterMs': delayAfterMs,
-      // Store the keyId. If key is null, store null.
       'keyId': key?.keyId,
       'modifiers': modifiers,
       'keyEventType': keyEventType.index,
+      'mouseButton': mouseButton,
+      'clickCount': clickCount,
+      'text': text,
+      'nestedPoints': nestedPoints.map((p) => p.toJson()).toList(),
+      'loopCount': loopCount,
     };
   }
 
@@ -88,6 +114,15 @@ class ClickPoint {
           : null,
       modifiers: (json['modifiers'] as List<dynamic>?)?.cast<String>() ?? [],
       keyEventType: KeyEventType.values[json['keyEventType'] as int? ?? 0],
+      mouseButton: json['mouseButton'] as String? ?? 'left',
+      clickCount: json['clickCount'] as int? ?? 1,
+      text: json['text'] as String?,
+      nestedPoints:
+          (json['nestedPoints'] as List<dynamic>?)
+              ?.map((p) => ClickPoint.fromJson(p as Map<String, dynamic>))
+              .toList() ??
+          [],
+      loopCount: json['loopCount'] as int? ?? 1,
     );
   }
 }

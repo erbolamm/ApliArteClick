@@ -56,10 +56,15 @@
               <div class="code-container pro">
                 <div class="code-wrapper">
                   <span class="prompt">$</span>
-                  <code
-                    onclick="navigator.clipboard.writeText(this.innerText)">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"</code>
+                  <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"</code>
                 </div>
-                <!-- Mini copy button logic could be duplicated or just rely on click-to-copy above -->
+                <button class="icon-copy-btn" onclick="copyCode(this)" aria-label="Copiar comando">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -72,9 +77,15 @@
               <div class="code-container legacy">
                 <div class="code-wrapper">
                   <span class="prompt">$</span>
-                  <code
-                    onclick="navigator.clipboard.writeText(this.innerText)">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)" -- v1.0.0</code>
+                  <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)" -- v1.0.0</code>
                 </div>
+                <button class="icon-copy-btn" onclick="copyCode(this)" aria-label="Copiar comando">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -186,13 +197,23 @@
   </main>
 
   <script>
-    function copyToClipboard() {
-      const text = document.getElementById('install-cmd').innerText;
+    function copyCode(btn) {
+      // Find the code element within the same container
+      const container = btn.closest('.code-container');
+      const codeElement = container.querySelector('code');
+      const text = codeElement.innerText;
+
       navigator.clipboard.writeText(text).then(() => {
-        const btn = document.querySelector('.icon-copy-btn');
-        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#28c840" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        // SVG icons
+        const svgCopy = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+        const svgCheck = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#28c840" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+        // Change icon to check
+        btn.innerHTML = svgCheck;
+
+        // Revert back after 2 seconds
         setTimeout(() => {
-          btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+          btn.innerHTML = svgCopy;
         }, 2000);
       });
     }
