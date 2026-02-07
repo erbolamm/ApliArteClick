@@ -491,6 +491,23 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
     state = state.copyWith(points: items);
   }
 
+  void reorderNestedPoints(String loopId, int oldIndex, int newIndex) {
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+
+    final loopIdx = state.points.indexWhere((p) => p.id == loopId);
+    if (loopIdx == -1) return;
+
+    final loop = state.points[loopIdx];
+    final List<ClickPoint> nestedItems = List.from(loop.nestedPoints);
+    final ClickPoint item = nestedItems.removeAt(oldIndex);
+    nestedItems.insert(newIndex, item);
+
+    final updatedLoop = loop.copyWith(nestedPoints: nestedItems);
+    updatePoint(updatedLoop);
+  }
+
   void updateDefaultDelay(int ms) {
     state = state.copyWith(multiClickDefaultDelayMs: ms);
   }

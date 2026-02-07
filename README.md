@@ -1,37 +1,41 @@
 # ApliArte Click Pro 🎯🖱️
 
-**¡Presentamos la Versión 2.0 (Pro)!** 🚀
+**¡Presentamos la Versión 3.0 (Advanced)!** 🚀
 
-Un auto-clicker profesional multiplataforma con interfaz moderna, secuencias mixtas y funciones avanzadas.
+Un auto-clicker profesional multiplataforma con interfaz moderna, secuencias mixtas, bucles avanzados y control total de flujo.
 
 **Web Oficial**: [apliarte-click-pro-2026.web.app](https://apliarte-click-pro-2026.web.app)
 
 ![ApliArte Click Logo](landing_page/assets/images/logo.svg)
 
-## 🌟 Novedades en Versión 2.0 (PRO)
+## 🌟 Novedades en Versión 3.0 (ADVANCED)
 
-### 🚀 Modo Multi-Clip & Secuencias Mixtas
-- **Clicks + Teclas**: Crea secuencias complejas combinando clicks de ratón con pulsaciones de teclado.
-- **Lista de Acciones**: Visualiza y reorganiza tu secuencia arrastrando y soltando.
-- **Atajos Avanzados**: Soporte para "Sostener" (Hold) teclas (ej. Mantener Shift presionado mientras haces clic).
+### 🔄 Control de Flujo Avanzado
+- **Bucles (Loops)**: Agrupa acciones y repítelas N veces con un solo contenedor.
+- **Drag & Drop**: Arrastra acciones dentro de bucles para anidarlas o reordenarlas.
+- **Pausa y Stop**: Control total - pausa la ejecución o detén secuencias en puntos específicos.
 
-### 💾 Librería de Acciones
-- **Guardar/Cargar**: Guarda tus secuencias favoritas y cárgalas con un clic.
-- **Acciones Predefinidas**: Incluye macros útiles como "Cambiar App (Cmd+Tab)", "Copiar", "Pegar".
+### ⌨️ Mejoras en Atajos de Teclado
+- **Visualización de Modificadores**: Ahora verás "Alt + B" en lugar de solo "B".
+- **Captura Mejorada**: Instrucciones claras paso a paso para grabar combinaciones correctamente.
 
-### 🎨 Nueva Interfaz Rediseñada
-- **Diseño de Columna Única**: Más limpio, compacto y responsivo.
-- **Mini Controles**: Intervalo y Atajos integrados en la cabecera para ahorrar espacio.
-- **Responsive**: La lista de acciones se adapta al tamaño de la ventana.
+### 🎨 UI Mejorada
+- **Info Screen Premium**: Guía visual con emojis, ejemplos y botón de sugerencias por email.
+- **Timer Editor Responsive**: Los campos de tiempo se actualizan mientras escribes.
+- **Reordenamiento en Bucles**: Reorganiza acciones anidadas con drag & drop.
 
 ---
 
 ## 📥 Descargas y Versiones
 
-Ofrecemos dos versiones para adaptarse a tus necesidades:
+Ofrecemos tres versiones para adaptarse a tus necesidades:
 
-### Versión 2.0.0 (Recomendada - PRO) ✨
-La versión más potente con todas las nuevas funcionalidades.
+### Versión 3.0.0 (Recomendada - ADVANCED) ✨
+La versión más potente con bucles, control de flujo y mejoras en la UI.
+- **macOS**: [ApliArteClickPro-macOS-v3.0.0.zip](https://github.com/erbolamm/ApliArteClick/releases/download/v3.0.0/ApliArteClickPro-macOS-v3.0.0.zip)
+
+### Versión 2.0.0 (PRO) 🔥
+Secuencias mixtas con clicks y teclas, librería de acciones guardadas.
 - **macOS**: [ApliArteClickPro-macOS-v2.0.0.zip](https://github.com/erbolamm/ApliArteClick/releases/download/v2.0.0/ApliArteClickPro-macOS-v2.0.0.zip)
 
 ### Versión 1.0.0 (Clásica - Legacy) 🏛️
@@ -42,11 +46,16 @@ La versión original simple, para automatizaciones básicas de un solo punto.
 
 ## 🚀 Instalación Rápida (Terminal)
 
-Puedes instalar cualquiera de las dos versiones usando nuestro script inteligente:
+Puedes instalar cualquiera de las tres versiones usando nuestro script inteligente:
 
-### Instalar V2.0 (Por Defecto)
+### Instalar V3.0 (Por Defecto)
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"
+```
+
+### Instalar V2.0 (Específica)
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)" -- v2.0.0
 ```
 
 ### Instalar V1.0 (Específica)
@@ -56,12 +65,13 @@ Puedes instalar cualquiera de las dos versiones usando nuestro script inteligent
 
 ---
 
-## 🎮 Guía de Uso Rápido (V2.0)
+## 🎮 Guía de Uso Rápido (V3.0)
 
-1. **Añadir Acción**: Pulsa el botón `+` azul para añadir un Click o una Tecla.
+1. **Añadir Acción**: Pulsa el botón `+` azul para añadir Click, Tecla, Texto, Bucle, Pausa o Stop.
 2. **Configurar**: 
    - **Click**: Pulsa "GRABAR POSICIÓN" y haz clic donde quieras.
-   - **Tecla**: Pulsa "TECLA / ATAJO" y presiona las teclas físicas (ej. Cmd+C).
+   - **Tecla**: Pulsa "TECLA / ATAJO" y mantén los modificadores (Alt, Cmd) mientras presionas la tecla.
+   - **Bucle**: Arrastra acciones al ícono ∞ para anidarlas. Usa el icono ☰ para reordenar.
 3. **Librería**: Usa el icono 📂 para cargar acciones guardadas o predefinidas.
 4. **Guardar**: Usa el icono 💾 para guardar tu secuencia actual.
 5. **Ejecutar**: Pulsa el botón Play ▶️ o usa tu tecla de atajo (F6 por defecto).

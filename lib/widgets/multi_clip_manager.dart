@@ -403,11 +403,20 @@ class MultiClipManager extends ConsumerWidget {
           ),
           if (point.type == ActionType.loop && point.nestedPoints.isNotEmpty)
             Container(
-              padding: const EdgeInsets.only(left: 32, right: 8, bottom: 8),
-              child: Column(
-                children: point.nestedPoints.asMap().entries.map((entry) {
-                  final nested = entry.value;
+              padding: const EdgeInsets.only(left: 8, right: 80),
+              child: ReorderableListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: point.nestedPoints.length,
+                onReorder: (oldIndex, newIndex) {
+                  ref
+                      .read(clickSettingsProvider.notifier)
+                      .reorderNestedPoints(point.id, oldIndex, newIndex);
+                },
+                itemBuilder: (context, index) {
+                  final nested = point.nestedPoints[index];
                   return Container(
+                    key: ValueKey(nested.id),
                     margin: const EdgeInsets.only(top: 4),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -419,6 +428,12 @@ class MultiClipManager extends ConsumerWidget {
                     ),
                     child: Row(
                       children: [
+                        Icon(
+                          Icons.drag_indicator,
+                          size: 14,
+                          color: Colors.white24,
+                        ),
+                        const SizedBox(width: 4),
                         Icon(
                           _getIconForAction(nested.type),
                           size: 12,
@@ -448,7 +463,7 @@ class MultiClipManager extends ConsumerWidget {
                       ],
                     ),
                   );
-                }).toList(),
+                },
               ),
             ),
         ],
