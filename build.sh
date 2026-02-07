@@ -5,7 +5,7 @@
 
 set -e
 
-echo "🚀 ApliArte Click Pro - Build Script v2.0.0"
+echo "🚀 ApliArte Click Pro - Build Script v3.0.0"
 echo "============================================"
 echo ""
 
@@ -22,12 +22,12 @@ build_macos() {
     
     echo -e "${BLUE}📦 Creando ZIP para distribución...${NC}"
     cd build/macos/Build/Products/Release
-    zip -r ../../../../../ApliArteClickPro-macOS-v2.0.0.zip "ApliArte Clicker.app"
+    zip -r ../../../../../ApliArteClickPro-macOS-v3.0.0.zip "ApliArte Clicker.app"
     cd ../../../../../
     
     echo -e "${GREEN}✅ macOS compilado exitosamente!${NC}"
-    echo -e "   Archivo: ApliArteClickPro-macOS-v2.0.0.zip"
-    ls -lh ApliArteClickPro-macOS-v2.0.0.zip
+    echo -e "   Archivo: ApliArteClickPro-macOS-v3.0.0.zip"
+    ls -lh ApliArteClickPro-macOS-v3.0.0.zip
 }
 
 # Función para compilar Windows
@@ -37,12 +37,12 @@ build_windows() {
     
     echo -e "${BLUE}📦 Creando ZIP para distribución...${NC}"
     cd build/windows/runner/Release
-    zip -r ../../../../ApliArteClickPro-Windows-v2.0.0.zip .
+    zip -r ../../../../ApliArteClickPro-Windows-v3.0.0.zip .
     cd ../../../../
     
     echo -e "${GREEN}✅ Windows compilado exitosamente!${NC}"
-    echo -e "   Archivo: ApliArteClickPro-Windows-v2.0.0.zip"
-    ls -lh ApliArteClickPro-Windows-v2.0.0.zip
+    echo -e "   Archivo: ApliArteClickPro-Windows-v3.0.0.zip"
+    ls -lh ApliArteClickPro-Windows-v3.0.0.zip
 }
 
 # Función para compilar Linux
@@ -52,12 +52,12 @@ build_linux() {
     
     echo -e "${BLUE}📦 Creando tarball para distribución...${NC}"
     cd build/linux/x64/release
-    tar -czf ../../../../ApliArteClickPro-Linux-v2.0.0.tar.gz bundle/
+    tar -czf ../../../../ApliArteClickPro-Linux-v3.0.0.tar.gz bundle/
     cd ../../../../
     
     echo -e "${GREEN}✅ Linux compilado exitosamente!${NC}"
-    echo -e "   Archivo: ApliArteClickPro-Linux-v2.0.0.tar.gz"
-    ls -lh ApliArteClickPro-Linux-v2.0.0.tar.gz
+    echo -e "   Archivo: ApliArteClickPro-Linux-v3.0.0.tar.gz"
+    ls -lh ApliArteClickPro-Linux-v3.0.0.tar.gz
 }
 
 # Función para compilar todas las plataformas

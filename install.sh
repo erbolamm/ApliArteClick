@@ -11,7 +11,7 @@ REPO_NAME="ApliArteClick"
 APP_NAME="ApliArte Clicker.app"
 INSTALL_DIR="/Applications"
 TEMP_DIR=$(mktemp -d)
-VERSION="${1:-v2.0.0}" # Default to v2.0.0, or use first argument
+VERSION="${1:-v3.0.0}" # Default to v3.0.0, or use first argument
 FILENAME="ApliArteClickPro-macOS-${VERSION}.zip"
 DOWNLOAD_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/${VERSION}/${FILENAME}"
 
