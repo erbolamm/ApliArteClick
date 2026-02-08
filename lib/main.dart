@@ -361,8 +361,9 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
                     );
                     break;
                 }
-                if (i < repeats - 1)
+                if (i < repeats - 1) {
                   await Future.delayed(const Duration(milliseconds: 50));
+                }
               }
             }
           }
@@ -375,8 +376,9 @@ class ClickSettingsNotifier extends Notifier<ClickSettings> {
                 final code = _getNativeKeyCode(key);
                 if (code != null) {
                   await _mouseService.performKeyPress(code);
-                  if (i < point.text!.length - 1)
+                  if (i < point.text!.length - 1) {
                     await Future.delayed(const Duration(milliseconds: 50));
+                  }
                 }
               }
             }

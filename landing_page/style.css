@@ -36,6 +36,7 @@ h1 span,
 h2 span {
     background: linear-gradient(135deg, #007AFF 0%, #00C6FF 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -175,6 +176,20 @@ main {
 
 .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+.github-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: #24292e;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.github-btn:hover {
+    background: #2f363d;
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .hero-visual {
@@ -505,6 +520,66 @@ footer {
     color: var(--text-dim);
     font-size: 0.9rem;
     font-weight: 500;
+}
+
+.badge-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.windows-badge {
+    background: rgba(0, 200, 255, 0.1);
+    color: #4da3ff;
+    border-color: rgba(0, 200, 255, 0.3);
+}
+
+.terminal-container {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 0;
+    width: 100%;
+    max-width: 800px;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+.terminal-tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tab-btn {
+    padding: 1rem 2rem;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    background: rgba(0, 122, 255, 0.05);
+    border-bottom: 2px solid var(--primary);
+}
+
+.tab-btn:hover:not(.active) {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.terminal-view {
+    display: none;
+    padding: 1.5rem 2rem;
+}
+
+.terminal-view.active {
+    display: block;
 }
 
 .terminal-app-icon {

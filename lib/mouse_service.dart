@@ -129,7 +129,6 @@ class _MacOSMouseService implements MouseService {
   }
 
   @override
-  @override
   Future<bool> isMouseButtonPressed() async {
     try {
       // Fallback for older interface, strictly checks left button
@@ -193,6 +192,8 @@ class _MacOSMouseService implements MouseService {
 
 /// Windows implementation using Win32 API directly via FFI.
 class _WindowsMouseService implements MouseService {
+  static const _channel = MethodChannel('com.apliarte.click/mouse');
+
   @override
   Future<void> performKeyDown(int keyCode) async {
     final input = _createKeyInput(keyCode, false);
@@ -223,18 +224,39 @@ class _WindowsMouseService implements MouseService {
       SetCursorPos(x.round(), y.round());
     }
 
-    // Simulate mouse down and up
-    final inputDown = calloc<INPUT>();
-    inputDown.ref.type = INPUT_MOUSE;
-    inputDown.ref.mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-    SendInput(1, inputDown, ffi.sizeOf<INPUT>());
-    free(inputDown);
+    int dwDownFlag = MOUSEEVENTF_LEFTDOWN;
+    int dwUpFlag = MOUSEEVENTF_LEFTUP;
 
-    final inputUp = calloc<INPUT>();
-    inputUp.ref.type = INPUT_MOUSE;
-    inputUp.ref.mi.dwFlags = MOUSEEVENTF_LEFTUP;
-    SendInput(1, inputUp, ffi.sizeOf<INPUT>());
-    free(inputUp);
+    if (button == 'right') {
+      dwDownFlag = MOUSEEVENTF_RIGHTDOWN;
+      dwUpFlag = MOUSEEVENTF_RIGHTUP;
+    } else if (button == 'middle') {
+      dwDownFlag = MOUSEEVENTF_MIDDLEDOWN;
+      dwUpFlag = MOUSEEVENTF_MIDDLEUP;
+    }
+
+    for (int i = 0; i < clickCount; i++) {
+      // Simulate mouse down
+      final inputDown = calloc<INPUT>();
+      inputDown.ref.type = INPUT_MOUSE;
+      inputDown.ref.mi.dwFlags = dwDownFlag;
+      SendInput(1, inputDown, ffi.sizeOf<INPUT>());
+      free(inputDown);
+
+      // Short delay for natural click
+      await Future.delayed(const Duration(milliseconds: 10));
+
+      // Simulate mouse up
+      final inputUp = calloc<INPUT>();
+      inputUp.ref.type = INPUT_MOUSE;
+      inputUp.ref.mi.dwFlags = dwUpFlag;
+      SendInput(1, inputUp, ffi.sizeOf<INPUT>());
+      free(inputUp);
+
+      if (i < clickCount - 1) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+    }
   }
 
   @override
@@ -358,12 +380,20 @@ class _WindowsMouseService implements MouseService {
 
   @override
   Future<void> showPreview(double x, double y) async {
-    // Windows preview not implemented yet
+    try {
+      await _channel.invokeMethod('showPreview', {'x': x, 'y': y});
+    } on PlatformException catch (e) {
+      debugPrint("Failed to show preview: ${e.message}");
+    }
   }
 
   @override
   Future<void> hidePreview() async {
-    // Windows preview not implemented yet
+    try {
+      await _channel.invokeMethod('hidePreview');
+    } on PlatformException catch (e) {
+      debugPrint("Failed to hide preview: ${e.message}");
+    }
   }
 }
 

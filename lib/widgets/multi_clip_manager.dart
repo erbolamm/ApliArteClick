@@ -338,10 +338,10 @@ class MultiClipManager extends ConsumerWidget {
           ListTile(
             dense: true,
             leading: DragTarget<String>(
-              onWillAccept: (data) =>
+              onWillAcceptWithDetails: (data) =>
                   point.type == ActionType.loop && data != point.id,
-              onAccept: (draggedId) {
-                _moveActionToLoop(ref, draggedId, point.id);
+              onAcceptWithDetails: (details) {
+                _moveActionToLoop(ref, details.data, point.id);
               },
               builder: (context, candidateData, rejectedData) {
                 return Container(

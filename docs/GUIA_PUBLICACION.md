@@ -1,14 +1,48 @@
-# 📋 Guía Rápida de Publicación v3.0.0
+# 📋 Guía Maestra de Publicación
 
-## ✅ Estado Actual
+Esta guía centraliza los procesos de compilación y despliegue para todas las plataformas soportadas por ApliArte Click Pro.
 
-Todo está listo para publicar. Solo falta conectividad a GitHub.
+## 🚀 Selecciona tu Plataforma
 
-**Archivos preparados:**
-- ✅ ApliArteClickPro-macOS-v3.0.0.zip (57MB)
-- ✅ Tag v3.0.0 creado
-- ✅ Código actualizado y committed
-- ✅ Scripts de instalación configurados
+- [🪟 Windows (v3.0.0)](file:///c:/Users/erbol_ymwr8wp/apps/ApliArteClick/docs/GUIA_PUBLICACION.md#pasos-para-windows-nuevo)
+- [🍎 macOS (v3.0.0)](file:///c:/Users/erbol_ymwr8wp/apps/ApliArteClick/docs/GUIA_PUBLICACION.md#pasos-para-publicar-manual)
+- [🐧 Linux (Próximamente)](file:///c:/Users/erbol_ymwr8wp/apps/ApliArteClick/docs/GUIA_LINUX.md)
+- [🌐 Landing Page (Firebase)](file:///c:/Users/erbol_ymwr8wp/apps/ApliArteClick/docs/GUIA_PUBLICACION.md#deploy-de-firebase)
+
+---
+
+## ✅ Estado del Release v3.0.0
+
+## 🪟 Pasos para Windows (NUEVO)
+
+### 1️⃣ Compilar para Windows
+
+```bash
+# Limpiar y obtener dependencias
+flutter clean
+flutter pub get
+
+# Generar el ejecutable
+flutter build windows --release
+```
+
+### 2️⃣ Empaquetar y Distribuir
+
+**Opción A - ZIP (Manual):**
+
+1. Comprime la carpeta `build/windows/runner/Release`.
+2. Renómbrala como `ApliArteClickPro-Windows-v3.0.0.zip`.
+
+**Opción B - MSIX (Instalador):**
+
+```bash
+# Si no está instalado: flutter pub add msix
+flutter pub run msix:create
+```
+
+### 3️⃣ Subir a GitHub
+
+Añade el `.zip` o el `.msix` al release `v3.0.0` en GitHub.
 
 ---
 
@@ -33,6 +67,7 @@ git push origin v3.0.0
 ### 2️⃣ Crear Release en GitHub
 
 **Opción A - Usando GitHub CLI (gh):**
+
 ```bash
 gh release create v3.0.0 \
   ApliArteClickPro-macOS-v3.0.0.zip \
@@ -42,13 +77,14 @@ gh release create v3.0.0 \
 
 **Opción B - Navegador (más fácil):**
 
-1. Abre: https://github.com/erbolamm/ApliArteClick/releases/new
+1. Abre: <https://github.com/erbolamm/ApliArteClick/releases/new>
 
 2. Rellena el formulario:
    - **Tag**: v3.0.0 (selecciónalo de la lista)
    - **Title**: v3.0.0 - Advanced Sequence Controls
-   
+
 3. **Description** (copia esto):
+
 ```markdown
 # 🚀 Version 3.0.0 - Advanced Sequence Controls
 
@@ -90,7 +126,7 @@ Todas las secuencias guardadas son compatibles. Simplemente instala la nueva ver
 ## 🎯 Mejoras sobre v2.0
 
 | Feature | v2.0 | v3.0 |
-|---------|------|------|
+| :--- | :--- | :--- |
 | Bucles | ❌ | ✅ |
 | Stop/Pause | ❌ | ✅ |
 | Reordenar Anidados | ❌ | ✅ |
@@ -99,8 +135,9 @@ Todas las secuencias guardadas son compatibles. Simplemente instala la nueva ver
 
 ## 📖 Documentación
 
-- **Web**: https://apliarte-click-pro-2026.web.app
-- **README**: https://github.com/erbolamm/ApliArteClick
+- **Web**: <https://apliarte-click-pro-2026.web.app>
+- **README**: <https://github.com/erbolamm/ApliArteClick>
+
 ```
 
 4. **Arrastra el archivo**: `ApliArteClickPro-macOS-v3.0.0.zip`
@@ -138,9 +175,10 @@ Verifica que descarga la v3.0.0 y no la v2.0.0.
 
 ### 5️⃣ Verificar Landing Page
 
-Abre: https://apliarte-click-pro-2026.web.app
+Abre: <https://apliarte-click-pro-2026.web.app>
 
 Verifica que:
+
 - ✅ Badge dice "Versión 3.0 (Advanced)"
 - ✅ Comando por defecto NO tiene `-- v2.0.0`
 - ✅ Hay tarjeta de "Control de Flujo Avanzado"
@@ -149,7 +187,8 @@ Verifica que:
 
 ## 🆘 Si algo falla
 
-### GitHub no acepta el push:
+### GitHub no acepta el push
+
 ```bash
 # Verificar estado
 git status
@@ -159,14 +198,16 @@ git log --oneline -3
 git push origin main --force
 ```
 
-### Firebase falla en login:
+### Firebase falla en login
+
 ```bash
 # Usar CI token
 firebase login:ci
 # Usar el token generado
 ```
 
-### El instalador descarga la versión incorrecta:
+### El instalador descarga la versión incorrecta
+
 ```bash
 # Verificar que install.sh tiene v3.0.0
 grep "VERSION=" install.sh
@@ -190,11 +231,12 @@ Antes de dar por terminado:
 
 ---
 
-## 🎉 ¡Listo!
+## 🎉 ¡Listo
 
 Una vez completados todos los pasos, la v3.0.0 estará publicada y disponible para descarga.
 
 **Comandos resumen (copiar y pegar):**
+
 ```bash
 cd /Users/apliarte/apps/click_mac
 git push origin main

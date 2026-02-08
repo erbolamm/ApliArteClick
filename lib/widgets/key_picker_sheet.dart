@@ -34,16 +34,20 @@ class _KeyPickerSheetState extends State<KeyPickerSheet> {
   String _getKeyLabel(LogicalKeyboardKey key) {
     if (key == LogicalKeyboardKey.space) return "Espacio";
     if (key == LogicalKeyboardKey.metaLeft ||
-        key == LogicalKeyboardKey.metaRight)
+        key == LogicalKeyboardKey.metaRight) {
       return "Cmd ⌘";
+    }
     if (key == LogicalKeyboardKey.controlLeft ||
-        key == LogicalKeyboardKey.controlRight)
+        key == LogicalKeyboardKey.controlRight) {
       return "Ctrl ⌃";
-    if (key == LogicalKeyboardKey.altLeft || key == LogicalKeyboardKey.altRight)
+    }
+    if (key == LogicalKeyboardKey.altLeft || key == LogicalKeyboardKey.altRight) {
       return "Alt ⌥";
+    }
     if (key == LogicalKeyboardKey.shiftLeft ||
-        key == LogicalKeyboardKey.shiftRight)
+        key == LogicalKeyboardKey.shiftRight) {
       return "Shift ⇧";
+    }
     if (key == LogicalKeyboardKey.enter) return "Enter ⏎";
     if (key == LogicalKeyboardKey.backspace) return "Backspace ⌫";
     if (key == LogicalKeyboardKey.escape) return "Esc";
@@ -72,17 +76,21 @@ class _KeyPickerSheetState extends State<KeyPickerSheet> {
     List<String> mods = [];
     for (final key in _physicallyHeldKeys) {
       if (key == LogicalKeyboardKey.metaLeft ||
-          key == LogicalKeyboardKey.metaRight)
+          key == LogicalKeyboardKey.metaRight) {
         mods.add('command');
+      }
       if (key == LogicalKeyboardKey.controlLeft ||
-          key == LogicalKeyboardKey.controlRight)
+          key == LogicalKeyboardKey.controlRight) {
         mods.add('control');
+      }
       if (key == LogicalKeyboardKey.altLeft ||
-          key == LogicalKeyboardKey.altRight)
+          key == LogicalKeyboardKey.altRight) {
         mods.add('alt');
+      }
       if (key == LogicalKeyboardKey.shiftLeft ||
-          key == LogicalKeyboardKey.shiftRight)
+          key == LogicalKeyboardKey.shiftRight) {
         mods.add('shift');
+      }
     }
     return mods.toSet().toList(); // Unique
   }
