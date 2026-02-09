@@ -35,7 +35,7 @@ Expand-Archive -Path (Join-Path $tempDir $filename) -DestinationPath $installDir
 # Create Desktop Shortcut
 Write-Host "🔗 Creando acceso directo en el escritorio..." -ForegroundColor Blue
 $WshShell = New-Object -ComObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut([Join-Path ([Environment]::GetFolderPath("Desktop")) "ApliArte Clicker.lnk"])
+$Shortcut = $WshShell.CreateShortcut((Join-Path ([Environment]::GetFolderPath("Desktop")) "ApliArte Clicker.lnk"))
 $Shortcut.TargetPath = Join-Path $installDir "apliarte_click.exe"
 $Shortcut.WorkingDirectory = $installDir
 $Shortcut.Save()
