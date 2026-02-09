@@ -22,7 +22,8 @@ Un auto-clicker profesional multiplataforma con interfaz moderna, secuencias mix
 Hemos centralizado toda la información técnica en la carpeta [`/docs`](/docs):
 
 - **[🚀 Guía Maestra de Publicación](/docs/GUIA_PUBLICACION.md)**: Cómo compilar y subir versiones para Windows, macOS y Linux.
-- **[🛠 Guía de Mantenimiento](/docs/GUIA_MANTENIMIENTO.md)**: Estructura del código, FFI y APIs nativas.
+- **[🛡️ Seguridad y Mantenimiento](/docs/SEGURIDAD_Y_MANTENIMIENTO.md)**: Información sobre privacidad, respaldos y cómo borrar el proyecto con seguridad.
+- **[🛠 Guía de Mantenimiento Técnico](/docs/GUIA_MANTENIMIENTO.md)**: Estructura del código, FFI y APIs nativas.
 - **[🐧 Guía Linux](/docs/GUIA_LINUX.md)**: Requisitos y pasos específicos para sistemas Linux.
 
 ---
