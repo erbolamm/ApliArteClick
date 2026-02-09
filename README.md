@@ -2,7 +2,7 @@
 
 **¡Presentamos la Versión 3.0 (Advanced)!** 🚀
 
-Un auto-clicker profesional multiplataforma con interfaz moderna, secuencias mixtas, bucles avanzados y control total de flujo.
+Un auto-clicker profesional multiplataforma con interfaz moderna, secuencias mixtas, bucles avanzados y control total de flujo. **Compatible con macOS (Intel/M1/M2) y Windows (10/11)**.
 
 **Web Oficial**: [apliarte-click-pro-2026.web.app](https://apliarte-click-pro-2026.web.app)
 
@@ -15,6 +15,7 @@ Un auto-clicker profesional multiplataforma con interfaz moderna, secuencias mix
 - **Bucles (Loops)**: Agrupa acciones y repítelas N veces con un solo contenedor.
 - **Drag & Drop**: Arrastra acciones dentro de bucles para anidarlas o reordenarlas.
 - **Pausa y Stop**: Control total - pausa la ejecución o detén secuencias en puntos específicos.
+- **Soporte Windows**: Nueva implementación nativa en C++ para Windows con previsualización visual.
 
 ## 📖 Documentación para Desarrolladores
 
@@ -49,6 +50,7 @@ Ofrecemos tres versiones para adaptarse a tus necesidades:
 
 La versión más potente con bucles, control de flujo y mejoras en la UI.
 
+- **Windows**: [ApliArteClickPro-Windows-v3.0.0.zip](https://github.com/erbolamm/ApliArteClick/releases/download/v3.0.0/ApliArteClickPro-Windows-v3.0.0.zip)
 - **macOS**: [ApliArteClickPro-macOS-v3.0.0.zip](https://github.com/erbolamm/ApliArteClick/releases/download/v3.0.0/ApliArteClickPro-macOS-v3.0.0.zip)
 
 ### Versión 2.0.0 (PRO) 🔥
@@ -71,8 +73,16 @@ Puedes instalar cualquiera de las tres versiones usando nuestro script inteligen
 
 ### Instalar V3.0 (Por Defecto)
 
+**macOS:**
+
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.sh)"
+```
+
+**Windows:**
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex
 ```
 
 ### Instalar V2.0 (Específica)
