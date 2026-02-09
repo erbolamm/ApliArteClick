@@ -27,10 +27,10 @@
 
 ### 🪟 Windows (Recomendado)
 
-**Instalación rápida vía PowerShell:**
+**Instalación rápida vía Terminal (CMD o PowerShell):**
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex
+powershell -ExecutionPolicy Bypass -Command "iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex"
 ```
 
 **Descarga manual:**

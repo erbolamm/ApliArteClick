@@ -88,7 +88,7 @@
               <div class="code-container pro">
                 <div class="code-wrapper">
                   <span class="prompt">PS></span>
-                  <code>iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex</code>
+                  <code>powershell -ExecutionPolicy Bypass -Command "iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex"</code>
                 </div>
                 <button class="icon-copy-btn" onclick="copyCode(this)" aria-label="Copiar comando">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -198,7 +198,7 @@
             <div class="terminal-mini">
               <span>Instalación PowerShell:</span>
               <code class="mini-code"
-                onclick="navigator.clipboard.writeText(this.innerText)">iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex</code>
+                onclick="navigator.clipboard.writeText(this.innerText)">powershell -ExecutionPolicy Bypass -Command "iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex"</code>
             </div>
           </div>
 

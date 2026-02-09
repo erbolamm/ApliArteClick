@@ -82,7 +82,7 @@ Puedes instalar cualquiera de las tres versiones usando nuestro script inteligen
 **Windows:**
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex
+powershell -ExecutionPolicy Bypass -Command "iwr -useb https://raw.githubusercontent.com/erbolamm/ApliArteClick/main/install.ps1 | iex"
 ```
 
 ### Instalar V2.0 (Específica)
