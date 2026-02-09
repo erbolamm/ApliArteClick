@@ -13,13 +13,13 @@
 }
 
 [data-theme="light"] {
-    --bg: #f9fafb;
-    --surface: #ffffff;
+    --bg: #ffffff;
+    --surface: #f3f4f6;
     --text: #111827;
-    --text-dim: #4b5563;
-    --glass: rgba(0, 0, 0, 0.03);
-    --glass-border: rgba(0, 0, 0, 0.08);
-    --card-bg: #ffffff;
+    --text-dim: #374151;
+    --glass: rgba(0, 0, 0, 0.05);
+    --glass-border: rgba(0, 0, 0, 0.1);
+    --card-bg: #f9fafb;
     --card-border: #e5e7eb;
 }
 
@@ -55,7 +55,8 @@ h2 span {
 
 /* Header & Nav */
 header {
-    background: rgba(5, 5, 5, 0.8);
+    background: var(--bg);
+    opacity: 0.95;
     backdrop-filter: blur(20px);
     position: fixed;
     top: 0;
