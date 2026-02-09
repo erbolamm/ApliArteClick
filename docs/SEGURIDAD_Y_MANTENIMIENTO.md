@@ -13,9 +13,9 @@ Este documento responde a tus inquietudes sobre la seguridad del proyecto públi
 
 He auditado el proyecto y esto es lo que debes saber:
 
-* **Sin Secretos**: No hay claves API, contraseñas de bases de datos ni tokens de acceso guardados en el código.
-* **Firebase**: El archivo `.firebaserc` solo contiene el nombre del proyecto (`apliarte-click-pro-2026`), lo cual es información pública necesaria para el despliegue. No permite que nadie acceda a tu cuenta de Google.
-* **Riesgos**: Al ser un repositorio público, cualquiera puede copiar (fork) tu código. Esto es normal en proyectos Open Source y no compromete tu seguridad personal ni tus archivos privados fuera de esta carpeta.
+* **Sin Secretos**: No hay claves API, contraseñas ni tokens de acceso en el código actual ni en el historial de commits anteriores. Es completamente seguro.
+* **Firebase**: El archivo `.firebaserc` solo contiene el nombre del proyecto (`apliarte-click-pro-2026`), información necesaria para el despliegue público.
+* **Filosofía Open Source**: Este es un proyecto de código abierto. Al estar en GitHub, invitas a otros a aprender, usar y mejorar el código. Cualquier desarrollador puede hacer un "fork" para proponer arreglos o nuevas funciones, lo cual fortalece el proyecto.
 
 ## 3. 💾 ¿Qué debería guardar/respaldar? (iCloud/Local)
 
